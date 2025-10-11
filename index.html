@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>تشخيص فوري للأعراض | الصفحة الرئيسية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="loading">
+    <div id="preloader" aria-hidden="true">
+        <div class="loader">
+            <div class="loader__pulse"></div>
+            <span class="loader__text">يتم تحميل المنصة الصحية...</span>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="nav-container">
+            <a class="brand" href="index.html">
+                <span class="brand__icon" aria-hidden="true">🩺</span>
+                <span class="brand__text">تشخيص فوري</span>
+            </a>
+            <nav class="main-nav" aria-label="القائمة الرئيسية">
+                <ul>
+                    <li><a href="index.html" class="is-active">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html">محادثة AI</a></li>
+                    <li><a href="#about">عن التطبيق</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobileMenu">
+                <span class="nav-toggle__line"></span>
+                <span class="sr-only">فتح القائمة</span>
+            </button>
+        </div>
+        <div id="mobileMenu" class="mobile-nav" hidden>
+            <nav aria-label="القائمة الجانبية">
+                <ul>
+                    <li><a href="index.html" class="is-active">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html">محادثة AI</a></li>
+                    <li><a href="index.html#about">عن التطبيق</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page" id="mainContent">
+        <section class="hero">
+            <div class="hero__content">
+                <span class="hero__badge">منصة صحة رقمية متكاملة</span>
+                <h1>تشخيص ذكي للأعراض مع متابعة فورية لحالتك الصحية</h1>
+                <p>ابدأ رحلتك مع منصة تشخيص فوري للأعراض لتحصل على توصيات دقيقة، خريطة للمستشفيات القريبة، ومحادثة مع مساعد طبي ذكي.</p>
+                <div class="hero__actions">
+                    <a class="btn btn-primary" href="diagnosis.html">ابدأ التشخيص الآن</a>
+                    <a class="btn btn-ghost" href="chat.html">تحدث مع المساعد الذكي</a>
+                </div>
+                <div class="hero__stats">
+                    <div>
+                        <h3>120K+</h3>
+                        <p>جلسة تشخيص ناجحة</p>
+                    </div>
+                    <div>
+                        <h3>95%</h3>
+                        <p>رضا المستخدمين</p>
+                    </div>
+                    <div>
+                        <h3>24/7</h3>
+                        <p>دعم واستشارات</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero__visual" aria-hidden="true">
+                <div class="pulse-card">
+                    <span>🩻</span>
+                    <strong>فحص سريع</strong>
+                    <p>نتائج أولية متكاملة</p>
+                </div>
+                <div class="pulse-card">
+                    <span>🧠</span>
+                    <strong>تحليل AI</strong>
+                    <p>مقاربات دقيقة للأعراض</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="highlights">
+            <div class="section__header">
+                <h2 id="highlights">خدمات المنصة</h2>
+                <p>مجموعة أدوات متكاملة لمتابعة صحتك من مكان واحد.</p>
+            </div>
+            <div class="feature-grid">
+                <article class="feature">
+                    <div class="feature__icon">🧾</div>
+                    <h3>تشخيص مدعوم بالذكاء الاصطناعي</h3>
+                    <p>تحليل دقيق للأعراض باستخدام قاعدة بيانات واسعة يتم تحديثها باستمرار.</p>
+                    <a class="link" href="diagnosis.html">انتقل لصفحة التشخيص</a>
+                </article>
+                <article class="feature">
+                    <div class="feature__icon">🗺️</div>
+                    <h3>تحديد أقرب المستشفيات</h3>
+                    <p>خريطة تفاعلية تعتمد على موقعك الجغرافي لعرض أهم المراكز والمستشفيات القريبة.</p>
+                    <a class="link" href="#mapSection">عرض الخريطة</a>
+                </article>
+                <article class="feature">
+                    <div class="feature__icon">💬</div>
+                    <h3>محادثة طبية فورية</h3>
+                    <p>تواصل مع مساعد طبي افتراضي للحصول على نصائح مبدئية حول حالتك.</p>
+                    <a class="link" href="chat.html">ابدأ المحادثة</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="vitals">
+            <div class="section__header">
+                <h2 id="vitals">مراقبة المؤشرات الحيوية</h2>
+                <p>اطّلع على قراءاتك العامة مع إمكانية تحديثها لمحاكاة حالتك الحالية.</p>
+            </div>
+            <div class="panel-grid">
+                <article class="panel panel--primary">
+                    <header class="panel__header">
+                        <h3>لوحة المؤشرات</h3>
+                        <button class="btn btn-small" type="button" id="updateVitalsBtn">تحديث القيم</button>
+                    </header>
+                    <div class="vitals-grid">
+                        <div class="vital-card">
+                            <span class="vital-card__icon">🩸</span>
+                            <div>
+                                <h4>ضغط الدم</h4>
+                                <p id="bpValue">120/80</p>
+                                <span class="vital-chip" id="bpStatus">طبيعي</span>
+                            </div>
+                        </div>
+                        <div class="vital-card">
+                            <span class="vital-card__icon">🧪</span>
+                            <div>
+                                <h4>سكر الدم</h4>
+                                <p id="glucoseValue">98 mg/dL</p>
+                                <span class="vital-chip" id="glucoseStatus">طبيعي</span>
+                            </div>
+                        </div>
+                        <div class="vital-card">
+                            <span class="vital-card__icon">❤️</span>
+                            <div>
+                                <h4>نبض القلب</h4>
+                                <p id="pulseValue">72 bpm</p>
+                                <span class="vital-chip" id="pulseStatus">طبيعي</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <article class="panel">
+                    <header class="panel__header">
+                        <h3>فحص بصمة الاستشعار</h3>
+                    </header>
+                    <p>أجرِ فحصًا سريعًا للأكسجين ومعدل النبض باستخدام مستشعر البصمة عبر التطبيق.</p>
+                    <button class="btn btn-primary btn-full" type="button" id="fingerCheckBtn">تشغيل الفحص الآن</button>
+                </article>
+                <article class="panel">
+                    <header class="panel__header">
+                        <h3>آخر التنبيهات الصحية</h3>
+                    </header>
+                    <ul class="timeline" id="insightsTimeline">
+                        <li class="timeline__item">سيتم عرض آخر التوصيات بمجرد إجراء تحليلات وتشخيصات.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="mapSection" class="section" aria-labelledby="mapHeading">
+            <div class="section__header">
+                <h2 id="mapHeading">أقرب المستشفيات والمراكز الطبية في بنها</h2>
+                <p>نحدد موقعك بإذن منك ثم نعرض أفضل الخيارات القريبة.</p>
+            </div>
+            <div class="map-wrapper">
+                <div id="mapCanvas" class="map-canvas" role="application" aria-label="خريطة المستشفيات"></div>
+                <div id="mapStatus" class="map-status">جاري تحميل الخريطة...</div>
+            </div>
+        </section>
+
+        <section id="about" class="section" aria-labelledby="aboutHeading">
+            <div class="section__header">
+                <h2 id="aboutHeading">عن منصة تشخيص فوري للأعراض</h2>
+                <p>رحلتنا نحو تمكين المستخدم العربي من الوصول إلى معلومات صحية موثوقة.</p>
+            </div>
+            <div class="about-layout">
+                <div class="about-text">
+                    <p>تم تطوير منصة تشخيص فوري للأعراض لتكون مرجعًا موثوقًا وواجهة سهلة الاستخدام تساعد الأفراد على فهم حالتهم الصحية الأولية قبل زيارة الطبيب المختص.</p>
+                    <div class="pill-group">
+                        <span class="pill">دقة عالية</span>
+                        <span class="pill">تحديث دوري</span>
+                        <span class="pill">محتوى عربي</span>
+                        <span class="pill">دعم 24/7</span>
+                    </div>
+                </div>
+                <div class="about-accordion">
+                    <button class="accordion-toggle" type="button" aria-expanded="false" aria-controls="privacyPanel">الخصوصية</button>
+                    <div id="privacyPanel" class="accordion-panel" hidden>
+                        <p>نلتزم بحماية بيانات المستخدمين وتخزينها بصورة آمنة وعدم مشاركتها إلا بإذن صريح.</p>
+                    </div>
+                    <button class="accordion-toggle" type="button" aria-expanded="false" aria-controls="termsPanel">الشروط والأحكام</button>
+                    <div id="termsPanel" class="accordion-panel" hidden>
+                        <p>نتائج المنصة استرشادية ولا تغني عن التشخيص السريري. باستخدامك للمنصة فإنك توافق على ذلك.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section" aria-labelledby="contactHeading">
+            <div class="section__header">
+                <h2 id="contactHeading">تواصل معنا</h2>
+                <p>نسعد بالإجابة عن استفساراتك خلال ٢٤ ساعة عبر البريد الإلكتروني.</p>
+            </div>
+            <div class="contact-card">
+                <form id="contactForm" class="form">
+                    <label class="form__field">
+                        <span>الاسم الكامل</span>
+                        <input type="text" id="contactName" required placeholder="الاسم">
+                    </label>
+                    <label class="form__field">
+                        <span>البريد الإلكتروني</span>
+                        <input type="email" id="contactEmail" required placeholder="name@example.com">
+                    </label>
+                    <label class="form__field">
+                        <span>رسالتك</span>
+                        <textarea id="contactMessage" rows="4" required placeholder="كيف يمكننا مساعدتك؟"></textarea>
+                    </label>
+                    <button class="btn btn-primary btn-full" type="submit">إرسال الرسالة</button>
+                </form>
+                <div id="contactFeedback" class="form-feedback" hidden></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2025 تشخيص فوري للأعراض. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <dialog id="fingerDialog" class="modal">
+        <div class="modal__content">
+            <button class="modal__close" type="button" id="closeFingerDialog" aria-label="إغلاق">×</button>
+            <div class="modal__heading">
+                <span class="modal__icon">🔍</span>
+                <h3>قيد الفحص بالبصمة</h3>
+            </div>
+            <p>يرجى وضع إصبعك على المستشعر للحظات حتى يكتمل الفحص.</p>
+            <div class="finger-scan">
+                <div class="finger-scan__wave"></div>
+            </div>
+            <p id="fingerResult" class="modal__status">جاري قراءة البيانات الحيوية...</p>
+        </div>
+    </dialog>
+
+    <script src="app.js" defer></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
+</body>
+</html>

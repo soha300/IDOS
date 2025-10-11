@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>تشخيص فوري للأعراض | دردشة المساعد الذكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="loading">
+    <div id="preloader" aria-hidden="true">
+        <div class="loader">
+            <div class="loader__pulse"></div>
+            <span class="loader__text">جارٍ تهيئة المساعد الذكي...</span>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="nav-container">
+            <a class="brand" href="index.html">
+                <span class="brand__icon" aria-hidden="true">🩺</span>
+                <span class="brand__text">تشخيص فوري</span>
+            </a>
+            <nav class="main-nav" aria-label="القائمة الرئيسية">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html" class="is-active">محادثة AI</a></li>
+                    <li><a href="index.html#about">عن التطبيق</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobileMenu">
+                <span class="nav-toggle__line"></span>
+                <span class="sr-only">فتح القائمة</span>
+            </button>
+        </div>
+        <div id="mobileMenu" class="mobile-nav" hidden>
+            <nav aria-label="القائمة الجانبية">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html" class="is-active">محادثة AI</a></li>
+                    <li><a href="index.html#about">عن التطبيق</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page chat-page" id="chatPage">
+        <section class="chat-hero">
+            <div class="chat-hero__content">
+                <h1>تحدث مع المساعد الصحي الذكي</h1>
+                <p>ابدأ محادثة فورية للحصول على نصائح أولية وإرشادات معتمدة على الأعراض التي تشعر بها.</p>
+            </div>
+            <button class="btn btn-ghost btn-small" type="button" id="clearChatBtn">تفريغ المحادثة</button>
+        </section>
+
+        <section class="chat-section" aria-label="غرفة المحادثة">
+            <div class="chat-window" id="chatWindow" role="log" aria-live="polite" aria-relevant="additions">
+                <div class="chat-message chat-message--ai">
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble">
+                        <span class="chat-name">المساعد الذكي</span>
+                        <p>مرحبًا! أنا هنا لمساعدتك. أخبرني بما تشعر به لنبدأ.</p>
+                        <time datetime="">الآن</time>
+                    </div>
+                </div>
+            </div>
+            <form class="chat-form" id="chatForm">
+                <label class="sr-only" for="chatInput">أدخل رسالتك</label>
+                <input type="text" id="chatInput" placeholder="اكتب ما تشعر به..." autocomplete="off" required>
+                <button class="btn btn-primary" type="submit" aria-label="إرسال">إرسال</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2025 تشخيص فوري للأعراض. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="chat.js" defer></script>
+</body>
+</html>

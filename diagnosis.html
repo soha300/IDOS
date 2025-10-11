@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>تشخيص فوري للأعراض | صفحة التحليل الذكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="loading">
+    <div id="preloader" aria-hidden="true">
+        <div class="loader">
+            <div class="loader__pulse"></div>
+            <span class="loader__text">تجهيز أدوات التشخيص...</span>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="nav-container">
+            <a class="brand" href="index.html">
+                <span class="brand__icon" aria-hidden="true">🩺</span>
+                <span class="brand__text">تشخيص فوري</span>
+            </a>
+            <nav class="main-nav" aria-label="القائمة الرئيسية">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html" class="is-active">التشخيص</a></li>
+                    <li><a href="chat.html">محادثة AI</a></li>
+                    <li><a href="index.html#about">عن التطبيق</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobileMenu">
+                <span class="nav-toggle__line"></span>
+                <span class="sr-only">فتح القائمة</span>
+            </button>
+        </div>
+        <div id="mobileMenu" class="mobile-nav" hidden>
+            <nav aria-label="القائمة الجانبية">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html" class="is-active">التشخيص</a></li>
+                    <li><a href="chat.html">محادثة AI</a></li>
+                    <li><a href="index.html#about">عن التطبيق</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page" id="diagnosisPage">
+        <section class="hero hero--slim">
+            <div class="hero__content hero__content--slim">
+                <span class="hero__badge">تحليل متقدم</span>
+                <h1>صفحة التشخيص الذكي للأعراض</h1>
+                <p>اختر الأعراض التي تشعر بها، وسنقارنها بقاعدة بيانات طبية متجددة لنقدّم لك احتمالات تشخيص دقيقة.</p>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="inputHeading">
+            <div class="section__header">
+                <h2 id="inputHeading">بيانات الحالة الصحية</h2>
+                <p>أضف الأعراض يدويًا أو اختر من الاقتراحات الجاهزة.</p>
+            </div>
+            <div class="diagnosis-layout">
+                <div class="diagnosis-panel">
+                    <form id="symptomForm" class="form diagnosis-form">
+                        <label class="form__field">
+                            <span>أدخل عرضًا ثم اضغط إضافة</span>
+                            <div class="input-group">
+                                <input type="text" id="symptomInput" placeholder="مثل: كحة شديدة" autocomplete="off">
+                                <button class="btn btn-primary" type="button" id="addSymptomBtn">إضافة العرض</button>
+                            </div>
+                        </label>
+                        <label class="form__field">
+                            <span>اختر القسم الطبي الأقرب</span>
+                            <select id="departmentSelect">
+                                <option value="" selected>تحديد القسم تلقائيًا</option>
+                                <option value="طب عام">طب عام</option>
+                                <option value="باطنة">باطنة</option>
+                                <option value="طب الأطفال">طب الأطفال</option>
+                                <option value="أمراض الصدر">أمراض الصدر</option>
+                                <option value="أمراض القلب">أمراض القلب</option>
+                                <option value="الأمراض الجلدية">الأمراض الجلدية</option>
+                                <option value="الصحة النفسية">الصحة النفسية</option>
+                                <option value="الأعصاب">الأعصاب</option>
+                            </select>
+                        </label>
+                        <div class="selected-symptoms" id="selectedSymptoms" aria-live="polite">
+                            <p class="muted">لم يتم إضافة أعراض بعد.</p>
+                        </div>
+                        <div class="form__actions">
+                            <button class="btn btn-primary btn-full" type="submit">تشغيل التحليل الذكي</button>
+                            <button class="btn btn-ghost btn-full" type="button" id="clearSymptomsBtn">تفريغ القائمة</button>
+                        </div>
+                    </form>
+                    <div class="suggestions" id="symptomSuggestions">
+                        <h3>أعراض شائعة</h3>
+                        <div class="chip-list" id="suggestionChips">
+                            <span class="muted">جاري تحميل الاقتراحات...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="diagnosis-panel diagnosis-panel--info">
+                    <h3>كيفية استخدام أداة التشخيص</h3>
+                    <ul class="checklist">
+                        <li>أضف ٣ أعراض على الأقل لتحصل على نتيجة أدق.</li>
+                        <li>يمكنك اختيار القسم الطبي يدويًا أو تركه للتحديد التلقائي.</li>
+                        <li>يتم تحليل الأعراض ومقارنتها بقائمة أمراض موسعة.</li>
+                        <li>لا تغني النتائج عن مراجعة الطبيب المختص عند الضرورة.</li>
+                    </ul>
+                    <div class="info-card">
+                        <strong>💡 تلميح:</strong>
+                        <p>إضافة أعراض إضافية مثل مدة استمرار العرض أو شدته يساعد في تحسين دقة المقارنة.</p>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="resultHeading">
+            <div class="section__header">
+                <h2 id="resultHeading">نتائج التحليل</h2>
+                <p>سيتم عرض أهم الاحتمالات الطبية مع توصيات مبدئية.</p>
+            </div>
+            <div id="diagnosisResults" class="result-grid">
+                <div class="placeholder-card">
+                    <span>🔍</span>
+                    <p>قم بإدخال الأعراض ثم اضغط على "تشغيل التحليل الذكي" لعرض النتائج هنا.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="historyHeading">
+            <div class="section__header">
+                <h2 id="historyHeading">سجل التحليلات السابقة</h2>
+                <p>يمكنك العودة لنتائج تحليلاتك الأخيرة.</p>
+            </div>
+            <div id="historyList" class="history-grid">
+                <div class="placeholder-card">
+                    <span>🗂️</span>
+                    <p>لا يوجد سجل بعد. سيتم حفظ النتائج الأخيرة تلقائيًا.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2025 تشخيص فوري للأعراض. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="diagnosis.js" defer></script>
+</body>
+</html>
