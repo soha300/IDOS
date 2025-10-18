@@ -176,8 +176,18 @@
                 <p>نحدد موقعك بإذن منك ثم نعرض أفضل الخيارات القريبة.</p>
             </div>
             <div class="map-wrapper">
-                <div id="mapCanvas" class="map-canvas" role="application" aria-label="خريطة المستشفيات"></div>
-                <div id="mapStatus" class="map-status">جاري تحميل الخريطة...</div>
+                <div id="mapCanvas" class="map-canvas" role="application" aria-label="خريطة المستشفيات">
+                    <iframe
+                        title="خريطة المستشفيات في بنها"
+                        src="https://www.google.com/maps?q=30.466141,31.184769&hl=ar&z=14&output=embed"
+                        width="100%"
+                        height="360"
+                        style="border:0;"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <div id="mapStatus" class="map-status">يمكنك تحريك وتكبير الخريطة المباشرة بدون مفتاح API.</div>
             </div>
         </section>
 
@@ -255,6 +265,5 @@
     </dialog>
 
     <script src="app.js" defer></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
 </body>
 </html>
