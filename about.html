@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>عن منصة تشخيص فوري للأعراض</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="description" content="تعرف على منصة تشخيص فوري للأعراض - رحلتنا نحو تمكين المستخدم العربي من الوصول إلى معلومات صحية موثوقة">
+</head>
+<body class="loading">
+    <div id="preloader" aria-hidden="true">
+        <div class="loader">
+            <div class="loader__pulse"></div>
+            <span class="loader__text">يتم تحميل المنصة الصحية...</span>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="nav-container">
+            <a class="brand" href="index.html" aria-label="العودة للصفحة الرئيسية">
+                <span class="brand__icon" aria-hidden="true">🩺</span>
+                <span class="brand__text">تشخيص فوري</span>
+            </a>
+            <nav class="main-nav" aria-label="القائمة الرئيسية">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html">محادثة AI</a></li>
+                    <li><a href="about.html" class="is-active">عن التطبيق</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+            
+            <!-- إضافة قسم المستخدم الديناميكي -->
+            <div id="userSection" class="user-info" style="display: none;">
+                <div class="user-avatar" id="userAvatar">م</div>
+                <div>
+                    <div id="userName" class="user-welcome"></div>
+                    <div id="liveStats" class="live-stats" style="display: none;">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalRecords">0</span>
+                            <span class="stat-label">تشخيص</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="recentRecords">0</span>
+                            <span class="stat-label">مؤخراً</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-small btn-ghost" id="logoutBtn" aria-label="تسجيل الخروج">تسجيل الخروج</button>
+            </div>
+            <div id="authSection">
+                <button class="btn btn-small btn-primary" id="loginBtn" aria-label="تسجيل الدخول">تسجيل الدخول</button>
+            </div>
+            
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="قائمة التنقل">
+                <span class="nav-toggle__line"></span>
+                <span class="sr-only">فتح القائمة</span>
+            </button>
+        </div>
+        <div id="mobileMenu" class="mobile-nav" hidden>
+            <nav aria-label="القائمة الجانبية">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html">محادثة AI</a></li>
+                    <li><a href="about.html" class="is-active">عن التطبيق</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page" id="aboutPage">
+        <section class="hero hero--slim">
+            <div class="hero__content hero__content--slim">
+                <span class="hero__badge">منصة صحة رقمية</span>
+                <h1>عن منصة تشخيص فوري للأعراض</h1>
+                <p>رحلتنا نحو تمكين المستخدم العربي من الوصول إلى معلومات صحية موثوقة.</p>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="aboutHeading">
+            <div class="section__header">
+                <h2 id="aboutHeading">من نحن</h2>
+                <p>تعرف على رؤيتنا ورسالتنا في مجال الصحة الرقمية</p>
+            </div>
+            <div class="about-layout">
+                <div class="about-text">
+                    <p>تم تطوير منصة تشخيص فوري للأعراض لتكون مرجعًا موثوقًا وواجهة سهلة الاستخدام تساعد الأفراد على فهم حالتهم الصحية الأولية قبل زيارة الطبيب المختص.</p>
+                    
+                    <h3>رؤيتنا</h3>
+                    <p>أن نكون المنصة الرائدة في تقديم خدمات التشخيص الأولي للأعراض باللغة العربية، مع الحفاظ على أعلى معايير الجودة والدقة.</p>
+                    
+                    <h3>رسالتنا</h3>
+                    <p>تمكين المستخدم العربي من الوصول إلى معلومات صحية موثوقة بطريقة سهلة ومبسطة، مع التأكيد على أن هذه المعلومات استرشادية ولا تغني عن استشارة الطبيب المختص.</p>
+                    
+                    <div class="pill-group">
+                        <span class="pill">دقة عالية</span>
+                        <span class="pill">تحديث دوري</span>
+                        <span class="pill">محتوى عربي</span>
+                        <span class="pill">دعم 24/7</span>
+                    </div>
+                </div>
+                <div class="about-accordion">
+                    <button class="accordion-toggle" type="button" aria-expanded="false" aria-controls="privacyPanel">
+                        الخصوصية
+                        <span class="sr-only">تفاصيل الخصوصية</span>
+                    </button>
+                    <div id="privacyPanel" class="accordion-panel" hidden>
+                        <p>نلتزم بحماية بيانات المستخدمين وتخزينها بصورة آمنة وعدم مشاركتها إلا بإذن صريح. جميع البيانات الشخصية مشفرة ولا يتم تخزين أي معلومات حساسة.</p>
+                    </div>
+                    <button class="accordion-toggle" type="button" aria-expanded="false" aria-controls="termsPanel">
+                        الشروط والأحكام
+                        <span class="sr-only">تفاصيل الشروط والأحكام</span>
+                    </button>
+                    <div id="termsPanel" class="accordion-panel" hidden>
+                        <p>نتائج المنصة استرشادية ولا تغني عن التشخيص السريري. باستخدامك للمنصة فإنك توافق على ذلك وتقر بأن المعلومات المقدمة هي لأغراض التوعية الصحية فقط.</p>
+                    </div>
+                    <button class="accordion-toggle" type="button" aria-expanded="false" aria-controls="missionPanel">
+                        مهمتنا
+                        <span class="sr-only">تفاصيل المهمة</span>
+                    </button>
+                    <div id="missionPanel" class="accordion-panel" hidden>
+                        <p>نسعى لجعل المعلومات الصحية الموثوقة متاحة للجميع باللغة العربية، مع التركيز على البساطة والسهولة في الاستخدام لجميع الفئات العمرية.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="teamHeading">
+            <div class="section__header">
+                <h2 id="teamHeading">فريق العمل</h2>
+                <p>خبراء في مجال الطب والتكنولوجيا يعملون معًا لتقديم أفضل الخدمات</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">د.أ</div>
+                    <h4>د. أحمد محمد</h4>
+                    <span class="member-role">استشاري الطب الباطني</span>
+                    <p>خبرة 15 عاماً في التشخيص والعلاج</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">د.م</div>
+                    <h4>د. منى خالد</h4>
+                    <span class="member-role">أخصائية الصحة العامة</span>
+                    <p>متخصصة في التوعية الصحية والوقاية</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">م.س</div>
+                    <h4>م. سامي عبدالله</h4>
+                    <span class="member-role">مطور برمجيات</span>
+                    <p>خبرة في تطوير تطبيقات الصحة الرقمية</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="featuresHeading">
+            <div class="section__header">
+                <h2 id="featuresHeading">مميزات المنصة</h2>
+                <p>اكتشف ما يجعل منصتنا الخيار الأمثل لصحتك</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h4>تشخيص بالذكاء الاصطناعي</h4>
+                    <p>نظام ذكي يحلل الأعراض بدقة باستخدام خوارزميات متطورة</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h4>خصوصية وأمان</h4>
+                    <p>بياناتك محمية ومشفرة بأحدث تقنيات الأمان</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h4>محتوى عربي</h4>
+                    <p>واجهة ومحتوى مخصص بالكامل للمستخدم العربي</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>نتائج فورية</h4>
+                    <p>احصل على تشخيص أولي خلال ثوانٍ معدودة</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="disclaimerHeading">
+            <div class="section__header">
+                <h2 id="disclaimerHeading">تنويه هام</h2>
+            </div>
+            <div class="disclaimer-card">
+                <div class="disclaimer-icon">⚠️</div>
+                <div class="disclaimer-content">
+                    <h4>هام: هذه المنصة للتوعية الصحية فقط</h4>
+                    <p>جميع النتائج والتشخيصات المقدمة عبر المنصة هي لأغراض التوعية الصحية الأولية فقط ولا تغني عن استشارة الطبيب المختص. يجب عليك دائماً التوجه إلى الطبيب للتشخيص الدقيق والعلاج المناسب.</p>
+                    <p>لا تتحمل المنصة أي مسؤولية عن أي قرارات طبية تتخذها بناءً على المعلومات المقدمة هنا.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section" aria-labelledby="contactHeading">
+            <div class="section__header">
+                <h2 id="contactHeading">تواصل معنا</h2>
+                <p>نسعد بالإجابة عن استفساراتك خلال ٢٤ ساعة عبر البريد الإلكتروني.</p>
+            </div>
+            <div class="contact-card">
+                <form id="contactForm" class="form" novalidate>
+                    <div class="form__field">
+                        <label for="contactName">الاسم الكامل</label>
+                        <input type="text" id="contactName" required placeholder="الاسم" aria-required="true">
+                    </div>
+                    <div class="form__field">
+                        <label for="contactEmail">البريد الإلكتروني</label>
+                        <input type="email" id="contactEmail" required placeholder="name@example.com" aria-required="true">
+                    </div>
+                    <div class="form__field">
+                        <label for="contactMessage">رسالتك</label>
+                        <textarea id="contactMessage" rows="4" required placeholder="كيف يمكننا مساعدتك؟" aria-required="true"></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-full" type="submit">إرسال الرسالة</button>
+                </form>
+                <div id="contactFeedback" class="form-feedback" hidden aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>تشخيص فوري</h4>
+                <p>منصة رقمية متكاملة للرعاية الصحية الأولية</p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="diagnosis.html">التشخيص</a></li>
+                    <li><a href="chat.html">المحادثة</a></li>
+                    <li><a href="about.html">عن التطبيق</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>الدعم</h4>
+                <ul>
+                    <li><a href="#privacy">الخصوصية</a></li>
+                    <li><a href="#terms">الشروط</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="footer-copyright">© 2025 تشخيص فوري للأعراض. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <!-- النوافذ المنبثقة للمصادقة -->
+    <dialog id="authDialog" class="modal" aria-labelledby="authDialogTitle">
+        <div class="modal__content">
+            <button class="modal__close" type="button" id="closeAuthDialog" aria-label="إغلاق نافذة المصادقة">×</button>
+            <div class="modal__heading">
+                <span class="modal__icon">🔐</span>
+                <h3 id="authDialogTitle">تسجيل الدخول</h3>
+            </div>
+            <form id="loginForm" class="auth-form" novalidate>
+                <div class="form__field">
+                    <label for="loginEmail">البريد الإلكتروني</label>
+                    <input type="email" id="loginEmail" required placeholder="name@example.com" aria-required="true">
+                </div>
+                <div class="form__field">
+                    <label for="loginPassword">كلمة المرور</label>
+                    <input type="password" id="loginPassword" required placeholder="كلمة المرور" aria-required="true">
+                </div>
+                <button class="btn btn-primary btn-full" type="submit">تسجيل الدخول</button>
+            </form>
+            <p class="text-center">ليس لديك حساب؟ <button class="link-button" id="showRegister" aria-label="الانتقال إلى إنشاء حساب">إنشاء حساب جديد</button></p>
+        </div>
+    </dialog>
+
+    <dialog id="registerDialog" class="modal" aria-labelledby="registerDialogTitle">
+        <div class="modal__content">
+            <button class="modal__close" type="button" id="closeRegisterDialog" aria-label="إغلاق نافذة التسجيل">×</button>
+            <div class="modal__heading">
+                <span class="modal__icon">👤</span>
+                <h3 id="registerDialogTitle">إنشاء حساب جديد</h3>
+            </div>
+            <form id="registerForm" class="auth-form" novalidate>
+                <div class="form__field">
+                    <label for="registerName">الاسم الكامل</label>
+                    <input type="text" id="registerName" required placeholder="الاسم الكامل" aria-required="true">
+                </div>
+                <div class="form__field">
+                    <label for="registerEmail">البريد الإلكتروني</label>
+                    <input type="email" id="registerEmail" required placeholder="name@example.com" aria-required="true">
+                </div>
+                <div class="form__field">
+                    <label for="registerPassword">كلمة المرور</label>
+                    <input type="password" id="registerPassword" required placeholder="كلمة المرور" aria-required="true">
+                </div>
+                <button class="btn btn-primary btn-full" type="submit">إنشاء حساب</button>
+            </form>
+            <p class="text-center">لديك حساب بالفعل؟ <button class="link-button" id="showLogin" aria-label="الانتقال إلى تسجيل الدخول">تسجيل الدخول</button></p>
+        </div>
+    </dialog>
+
+    <script src="app.js"></script>
+    
+    <style>
+        /* أنماط إضافية لصفحة about.html */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .team-member {
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+        
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .member-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+        
+        .member-role {
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .disclaimer-card {
+            display: flex;
+            gap: 1.5rem;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+        }
+        
+        .disclaimer-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+        }
+        
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul li a {
+            text-decoration: none;
+            color: var(--color-muted);
+            transition: color var(--transition);
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--color-primary);
+        }
+        
+        .footer-copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-muted);
+        }
+        
+        @media (max-width: 768px) {
+            .disclaimer-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .team-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>
