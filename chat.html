@@ -1,85 +1,643 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>تشخيص فوري للأعراض | دردشة المساعد الذكي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body class="loading">
-    <div id="preloader" aria-hidden="true">
-        <div class="loader">
-            <div class="loader__pulse"></div>
-            <span class="loader__text">جارٍ تهيئة المساعد الذكي...</span>
-        </div>
-    </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المساعد الذكي | تشخيص فوري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8B5FBF;
+            --primary-dark: #6A4A8C;
+            --primary-light: #A67FCF;
+            --secondary: #D4C1EC;
+            --accent: #F76C6C;
+            --success: #57CC99;
+            --warning: #FFD166;
+            --light: #F8F9FA;
+            --dark: #212529;
+            --gray: #6C757D;
+            --gradient-primary: linear-gradient(135deg, #8B5FBF 0%, #6A4A8C 100%);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+        }
 
-    <header class="site-header">
-        <div class="nav-container">
-            <a class="brand" href="index.html">
-                <span class="brand__icon" aria-hidden="true">🩺</span>
-                <span class="brand__text">تشخيص فوري</span>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-left: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+        }
+
+        .chat-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius) var(--radius) 0 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .chat-info h2 {
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-status {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: white;
+            padding: 1.5rem;
+            overflow-y: auto;
+            border-left: 1px solid #e9ecef;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--primary);
+            color: white;
+        }
+
+        .message.bot .message-avatar {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message.user .message-content {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius) 0 var(--radius) var(--radius);
+        }
+
+        .message.bot .message-content {
+            background: var(--light);
+            color: var(--dark);
+            padding: 1rem;
+            border-radius: 0 var(--radius) var(--radius) var(--radius);
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quick-reply {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-reply:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chat-input-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0 0 var(--radius) var(--radius);
+            border: 1px solid #e9ecef;
+            border-top: none;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid #e9ecef;
+            border-radius: var(--radius);
+            padding: 1rem;
+            font-family: 'Cairo', sans-serif;
+            resize: none;
+            min-height: 60px;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .send-button:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: white;
+                width: 200px;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: var(--radius);
+                gap: 1rem;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .chat-container {
+                margin: 1rem auto;
+                height: calc(100vh - 150px);
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .chat-header {
+                padding: 1rem;
+            }
+            
+            .chat-messages {
+                padding: 1rem;
+            }
+            
+            .chat-input-container {
+                padding: 1rem;
+            }
+            
+            .message {
+                gap: 0.5rem;
+            }
+            
+            .message-avatar {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-stethoscope logo-icon"></i>
+                <span class="logo-text">تشخيص فوري</span>
             </a>
-            <nav class="main-nav" aria-label="القائمة الرئيسية">
-                <ul>
-                    <li><a href="index.html">الرئيسية</a></li>
-                    <li><a href="diagnosis.html">التشخيص</a></li>
-                    <li><a href="chat.html" class="is-active">محادثة AI</a></li>
-                    <li><a href="index.html#about">عن التطبيق</a></li>
-                    <li><a href="index.html#contact">اتصل بنا</a></li>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a></li>
+                    <li><a href="diagnosis.html" class="nav-link"><i class="fas fa-diagnoses"></i> التشخيص</a></li>
+                    <li><a href="chat.html" class="nav-link active"><i class="fas fa-robot"></i> محادثة AI</a></li>
+                    <li><a href="hospitals.html" class="nav-link"><i class="fas fa-hospital"></i> المستشفيات</a></li>
+                    <li><a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> الإعدادات</a></li>
                 </ul>
             </nav>
-            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobileMenu">
-                <span class="nav-toggle__line"></span>
-                <span class="sr-only">فتح القائمة</span>
-            </button>
-        </div>
-        <div id="mobileMenu" class="mobile-nav" hidden>
-            <nav aria-label="القائمة الجانبية">
-                <ul>
-                    <li><a href="index.html">الرئيسية</a></li>
-                    <li><a href="diagnosis.html">التشخيص</a></li>
-                    <li><a href="chat.html" class="is-active">محادثة AI</a></li>
-                    <li><a href="index.html#about">عن التطبيق</a></li>
-                    <li><a href="index.html#contact">اتصل بنا</a></li>
-                </ul>
-            </nav>
+            
+            <div class="user-actions">
+                <div class="user-profile">
+                    <div class="user-avatar">م</div>
+                    <span>مستخدم</span>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="page chat-page" id="chatPage">
-        <section class="chat-hero">
-            <div class="chat-hero__content">
-                <h1>تحدث مع المساعد الصحي الذكي</h1>
-                <p>ابدأ محادثة فورية للحصول على نصائح أولية وإرشادات معتمدة على الأعراض التي تشعر بها.</p>
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-avatar">
+                <i class="fas fa-robot"></i>
             </div>
-            <button class="btn btn-ghost btn-small" type="button" id="clearChatBtn">تفريغ المحادثة</button>
-        </section>
-
-        <section class="chat-section" aria-label="غرفة المحادثة">
-            <div class="chat-window" id="chatWindow" role="log" aria-live="polite" aria-relevant="additions">
-                <div class="chat-message chat-message--ai">
-                    <div class="chat-avatar">🤖</div>
-                    <div class="chat-bubble">
-                        <span class="chat-name">المساعد الذكي</span>
-                        <p>مرحبًا! أنا هنا لمساعدتك. أخبرني بما تشعر به لنبدأ.</p>
-                        <time datetime="">الآن</time>
-                    </div>
+            <div class="chat-info">
+                <h2>المساعد الطبي الذكي</h2>
+                <div class="chat-status">
+                    <span class="status-dot"></span>
+                    <span>متصل الآن</span>
                 </div>
             </div>
-            <form class="chat-form" id="chatForm">
-                <label class="sr-only" for="chatInput">أدخل رسالتك</label>
-                <input type="text" id="chatInput" placeholder="اكتب ما تشعر به..." autocomplete="off" required>
-                <button class="btn btn-primary" type="submit" aria-label="إرسال">إرسال</button>
-            </form>
-        </section>
-    </main>
+        </div>
 
-    <footer class="site-footer">
-        <p>© 2025 تشخيص فوري للأعراض. جميع الحقوق محفوظة.</p>
-    </footer>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>مرحباً! أنا المساعد الطبي الذكي. كيف يمكنني مساعدتك اليوم؟</p>
+                    <div class="quick-replies">
+                        <div class="quick-reply" onclick="sendQuickReply('أعاني من صداع')">أعاني من صداع</div>
+                        <div class="quick-reply" onclick="sendQuickReply('لدي حرارة مرتفعة')">لدي حرارة مرتفعة</div>
+                        <div class="quick-reply" onclick="sendQuickReply('أشعر بألم في البطن')">أشعر بألم في البطن</div>
+                        <div class="quick-reply" onclick="sendQuickReply('استشارة عامة')">استشارة عامة</div>
+                    </div>
+                    <div class="message-time">الآن</div>
+                </div>
+            </div>
+        </div>
 
-    <script src="chat.js" defer></script>
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <textarea class="chat-input" id="messageInput" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                <button class="send-button" id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // وظيفة القائمة المتنقلة
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+
+            // إغلاق القائمة عند النقر خارجها
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.nav-menu') && !event.target.closest('.mobile-menu-btn')) {
+                    navMenu.classList.remove('active');
+                }
+            });
+
+            // التحقق من حالة تسجيل الدخول
+            const userSession = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+            
+            if (!userSession) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // تحديث معلومات المستخدم
+            try {
+                const userData = JSON.parse(userSession);
+                const userAvatar = document.querySelector('.user-avatar');
+                const userName = document.querySelector('.user-profile span');
+                
+                if (userData.name && userAvatar) {
+                    userAvatar.textContent = userData.name.charAt(0);
+                }
+                if (userData.name && userName) {
+                    userName.textContent = userData.name;
+                }
+            } catch (e) {
+                console.log('خطأ في تحليل بيانات المستخدم');
+            }
+
+            // إدارة الدردشة
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            // إرسال رسالة
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+
+                // إضافة رسالة المستخدم
+                addMessage(message, 'user');
+                messageInput.value = '';
+
+                // محاكاة رد المساعد
+                setTimeout(() => {
+                    const botResponse = generateBotResponse(message);
+                    addMessage(botResponse, 'bot');
+                }, 1000);
+            }
+
+            // إضافة رسالة للدردشة
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'message-avatar';
+                
+                if (sender === 'user') {
+                    const userData = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession'));
+                    avatarDiv.textContent = userData?.name?.charAt(0) || 'م';
+                } else {
+                    avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+                }
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                
+                const textP = document.createElement('p');
+                textP.textContent = text;
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = getCurrentTime();
+                
+                contentDiv.appendChild(textP);
+                contentDiv.appendChild(timeDiv);
+                
+                // إضافة ردود سريعة للرسائل الآلية
+                if (sender === 'bot') {
+                    const quickReplies = generateQuickReplies(text);
+                    if (quickReplies) {
+                        const repliesDiv = document.createElement('div');
+                        repliesDiv.className = 'quick-replies';
+                        quickReplies.forEach(reply => {
+                            const replyBtn = document.createElement('div');
+                            replyBtn.className = 'quick-reply';
+                            replyBtn.textContent = reply;
+                            replyBtn.onclick = () => sendQuickReply(reply);
+                            repliesDiv.appendChild(replyBtn);
+                        });
+                        contentDiv.appendChild(repliesDiv);
+                    }
+                }
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // توليد رد المساعد
+            function generateBotResponse(userMessage) {
+                const responses = {
+                    'صداع': 'الصداع يمكن أن يكون بسبب عدة عوامل مثل التوتر، الجفاف، أو مشاكل في النظر. هل يمكنك描述 شدة الألم ومكانه؟',
+                    'حرارة': 'ارتفاع درجة الحرارة قد يدل على وجود عدوى. كم تبلغ درجة حرارتك؟ وهل هناك أعراض أخرى؟',
+                    'بطن': 'آلام البطن يمكن أن تكون بسبب عسر هضم، أو مشاكل أخرى. أين exactly موقع الألم؟',
+                    'سعال': 'السعال قد يكون علامة على نزلة برد أو التهاب. هل السعال جاف أم مصحوب ببلغم؟',
+                    'default': 'شكراً لمشاركة أعراضك. للحصول على تشخيص دقيق، أنصحك بزيارة الطبيب. هل تريد أن أساعدك في العثور على مستشفى قريب؟'
+                };
+
+                for (const [key, response] of Object.entries(responses)) {
+                    if (userMessage.includes(key)) {
+                        return response;
+                    }
+                }
+                return responses.default;
+            }
+
+            // توليد ردود سريعة
+            function generateQuickReplies(botMessage) {
+                if (botMessage.includes('درجة حرارتك')) {
+                    return ['أقل من 38°', 'بين 38° و 39°', 'أكثر من 39°'];
+                }
+                if (botMessage.includes('موقع الألم')) {
+                    return ['أعلى البطن', 'أسفل البطن', 'الجانب الأيمن', 'الجانب الأيسر'];
+                }
+                if (botMessage.includes('مستشفى قريب')) {
+                    return ['نعم، أظهر المستشفيات', 'لا، شكراً'];
+                }
+                return null;
+            }
+
+            // إرسال رد سريع
+            window.sendQuickReply = function(reply) {
+                addMessage(reply, 'user');
+                
+                setTimeout(() => {
+                    const botResponse = generateBotResponse(reply);
+                    addMessage(botResponse, 'bot');
+                }, 1000);
+            };
+
+            // الحصول على الوقت الحالي
+            function getCurrentTime() {
+                return new Date().toLocaleTimeString('ar-EG', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            }
+
+            // أحداث الإدخال
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            sendButton.addEventListener('click', sendMessage);
+
+            // تكبير منطقة النص تلقائياً
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        });
+    </script>
 </body>
 </html>

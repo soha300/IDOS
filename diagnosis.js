@@ -1,4 +1,3 @@
-// تحسين diagnosis.js
 document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
     const preloader = document.getElementById("preloader");
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const addSymptomBtn = document.getElementById("addSymptomBtn");
     const selectedSymptomsContainer = document.getElementById("selectedSymptoms");
     const suggestionChips = document.getElementById("suggestionChips");
-    const departmentSelect = document.getElementById("departmentSelect");
     const clearSymptomsBtn = document.getElementById("clearSymptomsBtn");
     const resultsContainer = document.getElementById("diagnosisResults");
     const historyList = document.getElementById("historyList");
@@ -29,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(hideLoader, 450);
     });
 
+    // في حال تعليق حدث load (مثلاً بسبب fetch) نضمن إخفاء الـ Loader بعد 3 ثوانٍ
     setTimeout(hideLoader, 3000);
 
     if (navToggle) {
@@ -46,58 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // التحقق من صحة بيانات الأمراض
-    const validateDiseasesData = (diseases) => {
-        return diseases.filter(disease => 
-            disease.name && 
-            disease.department && 
-            Array.isArray(disease.symptoms) && 
-            disease.symptoms.length > 0 &&
-            disease.advice
-        );
-    };
-
-    const getFallbackDiseases = () => {
-        return [
-            {
-                "name": "نزلة برد",
-                "department": "طب عام",
-                "symptoms": ["رشح", "كحة", "احتقان", "حرارة خفيفة"],
-                "advice": "الراحة وشرب السوائل الدافئة مع مسكنات الألم البسيطة."
-            },
-            {
-                "name": "إنفلونزا موسمية",
-                "department": "طب عام",
-                "symptoms": ["حمى", "قشعريرة", "ألم عضلات", "إرهاق"],
-                "advice": "الراحة التامة وتناول سوائل دافئة وأدوية تخفف الألم وخافض حرارة."
-            },
-            {
-                "name": "التهاب الحلق",
-                "department": "أنف وأذن وحنجرة",
-                "symptoms": ["ألم حلق", "صعوبة بلع", "حمى", "تورم لوزتين"],
-                "advice": "الغرغرة بالماء والملح، شرب سوائل دافئة، وتجنب المهيجات."
-            }
-        ];
-    };
-
     const loadDiseases = async () => {
         try {
             const response = await fetch("diseases.json");
             if (!response.ok) throw new Error("تعذر تحميل قاعدة البيانات");
-            let diseases = await response.json();
-            
-            // التحقق من صحة البيانات
-            diseases = validateDiseasesData(diseases);
-            
-            if (diseases.length === 0) {
-                throw new Error("لا توجد بيانات صالحة للأمراض");
-            }
-            
-            return diseases;
+            diseases = await response.json();
+            renderSuggestions();
         } catch (error) {
-            console.error("خطأ في تحميل البيانات:", error);
-            // بيانات افتراضية في حالة الخطأ
-            return getFallbackDiseases();
+            console.error(error);
+            suggestionChips.innerHTML = `<span class="muted">حدث خطأ في تحميل البيانات. يرجى تشغيل الموقع عبر خادم محلي وإعادة المحاولة.</span>`;
+        } finally {
+            hideLoader();
         }
     };
 
@@ -111,10 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const renderSuggestions = () => {
         const all = getAllSymptoms().sort((a, b) => a.localeCompare(b, "ar"));
-        if (!suggestionChips) return;
-        
         suggestionChips.innerHTML = "";
-        all.slice(0, 20).forEach((symptom) => {
+        all.slice(0, 24).forEach((symptom) => {
             const chip = document.createElement("button");
             chip.type = "button";
             chip.className = "chip chip--light";
@@ -125,8 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const renderSelectedSymptoms = () => {
-        if (!selectedSymptomsContainer) return;
-        
         selectedSymptomsContainer.innerHTML = "";
         if (!selectedSymptoms.size) {
             const p = document.createElement("p");
@@ -154,21 +108,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const clean = symptom.trim();
         if (!clean) return;
         if (selectedSymptoms.has(clean)) {
-            if (symptomInput) symptomInput.value = "";
+            symptomInput.value = "";
             return;
         }
         selectedSymptoms.add(clean);
         renderSelectedSymptoms();
-        if (symptomInput) {
-            symptomInput.value = "";
-            symptomInput.focus();
-        }
+        symptomInput.value = "";
+        symptomInput.focus();
     };
 
     addSymptomBtn?.addEventListener("click", () => {
-        if (symptomInput) {
-            addSymptom(symptomInput.value);
-        }
+        addSymptom(symptomInput.value);
     });
 
     symptomInput?.addEventListener("keydown", (event) => {
@@ -181,14 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
     clearSymptomsBtn?.addEventListener("click", () => {
         selectedSymptoms.clear();
         renderSelectedSymptoms();
-        if (resultsContainer) {
-            resultsContainer.innerHTML = `
-                <div class="placeholder-card">
-                    <span>🔍</span>
-                    <p>قم بإدخال الأعراض ثم اضغط على "تشغيل التحليل الذكي" لعرض النتائج هنا.</p>
-                </div>
-            `;
-        }
+        resultsContainer.innerHTML = `
+            <div class="placeholder-card">
+                <span>🔍</span>
+                <p>قم بإدخال الأعراض ثم اضغط على "تشغيل التحليل الذكي" لعرض النتائج هنا.</p>
+            </div>
+        `;
     });
 
     const matchDiseases = () => {
@@ -196,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return [];
         }
         const selectedLower = Array.from(selectedSymptoms).map((sym) => sym.toLowerCase());
-        const departmentOverride = departmentSelect?.value || "";
+        const departmentOverride = departmentSelect?.value;
 
         const matches = diseases
             .map((disease) => {
@@ -218,8 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const renderResults = (results) => {
-        if (!resultsContainer) return;
-        
         resultsContainer.innerHTML = "";
         if (!results.length) {
             resultsContainer.innerHTML = `
@@ -269,8 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const renderHistory = () => {
-        if (!historyList) return;
-        
         const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
         historyList.innerHTML = "";
         if (!history.length) {
@@ -298,10 +242,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
+    // ⭐ دالة جديدة للتمرير إلى قسم النتائج
+    function scrollToResults() {
+        setTimeout(() => {
+            const resultsSection = document.getElementById('resultsSection');
+            if (resultsSection) {
+                const yOffset = -80; // تعويض للهيدر الثابت
+                const y = resultsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                
+                window.scrollTo({
+                    top: y,
+                    behavior: 'smooth'
+                });
+            }
+        }, 100);
+    }
+
     symptomForm?.addEventListener("submit", (event) => {
         event.preventDefault();
         if (!selectedSymptoms.size) {
             renderResults([]);
+            // التمرير حتى مع عدم وجود نتائج
+            scrollToResults();
             return;
         }
         const matches = matchDiseases();
@@ -319,17 +281,11 @@ document.addEventListener("DOMContentLoaded", () => {
             saveHistory(entry);
             renderHistory();
         }
+
+        // ⭐ التمرير إلى النتائج بعد عرضها
+        scrollToResults();
     });
 
-    // تحميل البيانات عند البدء
-    loadDiseases().then(loadedDiseases => {
-        diseases = loadedDiseases;
-        renderSuggestions();
-        renderHistory();
-    }).catch(error => {
-        console.error("فشل تحميل الأمراض:", error);
-        diseases = getFallbackDiseases();
-        renderSuggestions();
-        renderHistory();
-    });
+    // تشغيل البداية
+    loadDiseases().then(renderHistory);
 });

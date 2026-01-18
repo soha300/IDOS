@@ -1,139 +1,96 @@
-// تحديث الـ aiResponses لتصبح أكثر شمولية
-const aiResponses = [
-    {
-        triggers: ["صداع", "وجع راس", "ألم راس", "مخي بيوجعني"],
-        reply: "الصداع قد يكون بسبب الإرهاق، الجفاف، التوتر، أو مشاكل في النظر. جرب شرب الماء، أخذ قسط من الراحة، وتجنب الشاشات. إذا استمر أو كان شديدًا، راجع طبيب الأعصاب."
-    },
-    {
-        triggers: ["كحة", "سعال", "كحه", "تعب تنفس", "ضيق نفس"],
-        reply: "السعال المستمر يحتاج مراقبة. إذا صاحبه بلغم أو حرارة، قد يكون التهاب رئوي. تجنب المهيجات وراجع طبيب الصدر إذا استمر أكثر من أسبوع."
-    },
-    {
-        triggers: ["حمى", "حرارة", "سخونة", "دفيان"],
-        reply: "الحمى علامة دفاعية من الجسم. استخدم خافض حرارة، اشرب سوائل، وخذ قسطًا من الراحة. إذا تجاوزت 39° أو استمرت أكثر من 3 أيام، راجع الطبيب."
-    },
-    {
-        triggers: ["معدة", "بطن", "مغص", "غثيان", "قيء"],
-        reply: "آلام المعدة قد تكون بسبب عسر هضم أو تسمم غذائي. تجنب الأطعمة الدسمة واشرب كميات صغيرة من الماء. إذا استمر الألم أكثر من 6 ساعات، راجع الطبيب."
-    },
-    {
-        triggers: ["دوخة", "دوار", "دوخان"],
-        reply: "الدوخة قد تكون بسبب انخفاض الضغط، الجفاف، أو مشاكل في الأذن الداخلية. اجلس أو استلقِ فورًا، واشرب الماء. إذا تكررت، راجع الطبيب."
-    }
-];
-
-// إضافة وظيفة جديدة لتحليل أكثر ذكاء
-const getAdvancedAIResponse = (message) => {
-    const lowerMessage = message.toLowerCase();
-    
-    // تحليل متعدد الكلمات المفتاحية
-    const symptoms = {
-        صداع: ["راس", "مخ", "رأس", "راسي"],
-        كحة: ["سعال", "كح", "بلغم", "سعل"],
-        حمى: ["حرارة", "سخونة", "دفيان", "سخن"],
-        تعب: ["إرهاق", "خمول", "ضعف", "تعبان"],
-        ألم: ["وجع", "مؤلم", "يتألم", "الام"]
-    };
-    
-    let matchedSymptoms = [];
-    
-    for (const [symptom, keywords] of Object.entries(symptoms)) {
-        if (keywords.some(keyword => lowerMessage.includes(keyword)) || 
-            lowerMessage.includes(symptom)) {
-            matchedSymptoms.push(symptom);
-        }
-    }
-    
-    // ردود مخصصة بناء على مجموعة الأعراض
-    if (matchedSymptoms.length >= 2) {
-        if (matchedSymptoms.includes("حمى") && matchedSymptoms.includes("كحة")) {
-            return "الأعراض تشير إلى عدوى تنفسية محتملة. الراحة وشرب السوائل الدافئة مهمة. إذا اشتدت الأعراض راجع الطبيب.";
-        }
-        if (matchedSymptoms.includes("صداع") && matchedSymptoms.includes("تعب")) {
-            return "مزيج الصداع والتعب قد يشير إلى إرهاق أو جفاف. حاول أخذ قسط من الراحة وشرب الماء.";
-        }
-        if (matchedSymptoms.includes("معدة") && matchedSymptoms.includes("غثيان")) {
-            return "آلام المعدة مع الغثيان قد تكون بسبب عسر هضم أو تسمم غذائي. تجنب الطعام لعدة ساعات ثم ابدأ بالسوائل الخفيفة.";
-        }
-    }
-    
-    // البحث في الردود العادية
-    const matched = aiResponses.find((entry) =>
-        entry.triggers.some((trigger) => lowerMessage.includes(trigger))
-    );
-    
-    if (matched) return matched.reply;
-    
-    // رد ذكي افتراضي
-    return `أفهم أنك تشعر بـ ${matchedSymptoms.length > 0 ? matchedSymptoms.join(' و') : 'بعض الأعراض'}. هل يمكنك وصف مزيد من التفاصيل مثل: منذ متى وهل هناك أعراض أخرى؟`;
-};
-
-// الدوال الرئيسية للدردشة
 document.addEventListener("DOMContentLoaded", () => {
+    const body = document.body;
+    const preloader = document.getElementById("preloader");
+    const navToggle = document.querySelector(".nav-toggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const pages = document.querySelectorAll(".page");
+
     const chatWindow = document.getElementById("chatWindow");
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");
     const clearChatBtn = document.getElementById("clearChatBtn");
 
-    // تحميل المحادثة من localStorage
-    const loadChatHistory = () => {
-        const savedChat = localStorage.getItem("chatHistory");
-        if (savedChat && chatWindow) {
-            chatWindow.innerHTML = savedChat;
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-    };
+    const STORAGE_KEY = "aiChatHistory";
 
-    // حفظ المحادثة في localStorage
-    const saveChatHistory = () => {
-        if (chatWindow) {
-            localStorage.setItem("chatHistory", chatWindow.innerHTML);
-        }
-    };
+    window.addEventListener("load", () => {
+        setTimeout(() => {
+            body.classList.remove("loading");
+            preloader?.classList.add("preloader--hidden");
+            pages.forEach((page) => page.classList.add("is-visible"));
+        }, 450);
+    });
 
-    // إضافة رسالة جديدة
-    const addMessage = (message, isUser = false) => {
-        if (!chatWindow) return;
-
-        const messageDiv = document.createElement("div");
-        messageDiv.className = `chat-message ${isUser ? 'chat-message--user' : 'chat-message--ai'}`;
-        
-        const time = new Date().toLocaleTimeString("ar-EG", { 
-            hour: "numeric", 
-            minute: "2-digit" 
+    if (navToggle) {
+        navToggle.addEventListener("click", () => {
+            const expanded = navToggle.getAttribute("aria-expanded") === "true";
+            navToggle.setAttribute("aria-expanded", String(!expanded));
+            mobileMenu.hidden = expanded;
         });
+    }
 
-        messageDiv.innerHTML = `
-            <div class="chat-avatar">${isUser ? '👤' : '🤖'}</div>
+    mobileMenu?.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+            navToggle?.setAttribute("aria-expanded", "false");
+            mobileMenu.hidden = true;
+        });
+    });
+
+    const aiResponses = [
+        {
+            triggers: ["صداع", "وجع راس", "ألم راس"],
+            reply: "قد يكون الصداع مرتبطًا بالإرهاق أو الجفاف أو ضعف النظر. هل تشعر بارتفاع في الحرارة أو دوخة؟"
+        },
+        {
+            triggers: ["كحة", "سعال", "كحه", "تعب تنفس", "ضيق"],
+            reply: "السعال المستمر قد يشير إلى التهاب تنفسي أو حساسية. راقب الأعراض، وإذا صاحبها ضيق تنفس أو حرارة مرتفعة قم بمراجعة طبيب الصدر."
+        },
+        {
+            triggers: ["حمى", "حرارة", "سخونة"],
+            reply: "الحمى علامة على وجود عدوى. احرص على شرب السوائل وخذ قسطًا من الراحة. إذا استمرت أكثر من ٤٨ ساعة أو تجاوزت ٣٩° تواصل مع الطبيب."
+        },
+        {
+            triggers: ["قلقان", "توتر", "مش بنام", "أرق", "قلق"],
+            reply: "يبدو أنك تمر بتوتر نفسي. حاول ممارسة تمارين التنفس العميق قبل النوم وتجنب المنبهات. إن استمر الأرق، استشر أخصائي صحة نفسية."
+        },
+        {
+            triggers: ["مغص", "بطن", "إسهال", "اسهال", "غثيان"],
+            reply: "آلام البطن قد ترتبط بعسر الهضم أو عدوى بسيطة. تناول أطعمة خفيفة واشرب ماء بكثرة. إذا ظهر قيء أو استمر الألم، تواصل مع طبيب باطنة."
+        },
+        {
+            triggers: ["ضغط", "ارتفاع الضغط"],
+            reply: "ارتفاع الضغط يحتاج مراقبة دقيقة. تأكد من قياس الضغط أكثر من مرة وتجنب الملح. إذا كان الارتفاع مستمرًا راجع طبيب القلب أو الباطنة."
+        }
+    ];
+
+    const fallbackResponses = [
+        "أحتاج لمعلومات إضافية عن الأعراض التي تشعر بها. هل يمكنك التوضيح أكثر؟",
+        "أخبرني منذ متى بدأت الأعراض وهل هناك أعراض مصاحبة أخرى؟",
+        "أفهمك. تذكر أن النتائج هنا استرشادية ولا تغني عن زيارة الطبيب عند الحاجة."
+    ];
+
+    const appendMessage = (author, message) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = `chat-message chat-message--${author}`;
+        wrapper.innerHTML = `
+            <div class="chat-avatar">${author === "user" ? "🙂" : "🤖"}</div>
             <div class="chat-bubble">
-                <span class="chat-name">${isUser ? 'أنت' : 'المساعد الذكي'}</span>
+                <span class="chat-name">${author === "user" ? "أنت" : "المساعد الذكي"}</span>
                 <p>${message}</p>
-                <time datetime="">${time}</time>
+                <time>${new Date().toLocaleTimeString("ar-EG", { hour: "numeric", minute: "2-digit" })}</time>
             </div>
         `;
-
-        chatWindow.appendChild(messageDiv);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-        saveChatHistory();
+        chatWindow.appendChild(wrapper);
+        chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: "smooth" });
     };
 
-    // معالجة إرسال الرسالة
-    chatForm?.addEventListener("submit", (event) => {
-        event.preventDefault();
-        
-        const message = chatInput.value.trim();
-        if (!message) return;
-
-        // إضافة رسالة المستخدم
-        addMessage(message, true);
-        chatInput.value = "";
-
-        // محاكاة الكتابة
-        const typingIndicator = document.createElement("div");
-        typingIndicator.className = "chat-message chat-message--ai";
-        typingIndicator.innerHTML = `
+    const showTypingIndicator = () => {
+        const indicator = document.createElement("div");
+        indicator.className = "chat-message chat-message--ai";
+        indicator.id = "typingIndicator";
+        indicator.innerHTML = `
             <div class="chat-avatar">🤖</div>
             <div class="chat-bubble">
+                <span class="chat-name">المساعد الذكي</span>
                 <div class="typing-indicator">
                     <span></span>
                     <span></span>
@@ -141,34 +98,78 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
         `;
-        chatWindow.appendChild(typingIndicator);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatWindow.appendChild(indicator);
+        chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: "smooth" });
+    };
 
-        // إجابة الذكاء الاصطناعي بعد تأخير
-        setTimeout(() => {
-            chatWindow.removeChild(typingIndicator);
-            const aiResponse = getAdvancedAIResponse(message);
-            addMessage(aiResponse, false);
-        }, 1500);
-    });
+    const removeTypingIndicator = () => {
+        const indicator = document.getElementById("typingIndicator");
+        if (indicator) {
+            chatWindow.removeChild(indicator);
+        }
+    };
 
-    // مسح المحادثة
-    clearChatBtn?.addEventListener("click", () => {
-        if (chatWindow && confirm("هل تريد مسح كل المحادثة؟")) {
-            chatWindow.innerHTML = `
-                <div class="chat-message chat-message--ai">
-                    <div class="chat-avatar">🤖</div>
-                    <div class="chat-bubble">
-                        <span class="chat-name">المساعد الذكي</span>
-                        <p>مرحبًا! أنا هنا لمساعدتك. أخبرني بما تشعر به لنبدأ.</p>
-                        <time datetime="">الآن</time>
-                    </div>
+    const getAIResponse = (message) => {
+        const lowerMessage = message.toLowerCase();
+        const matched = aiResponses.find((entry) =>
+            entry.triggers.some((trigger) => lowerMessage.includes(trigger))
+        );
+        if (matched) return matched.reply;
+        return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+    };
+
+    const loadHistory = () => {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        stored.forEach(({ author, message, timestamp }) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = `chat-message chat-message--${author}`;
+            wrapper.innerHTML = `
+                <div class="chat-avatar">${author === "user" ? "🙂" : "🤖"}</div>
+                <div class="chat-bubble">
+                    <span class="chat-name">${author === "user" ? "أنت" : "المساعد الذكي"}</span>
+                    <p>${message}</p>
+                    <time>${timestamp}</time>
                 </div>
             `;
-            localStorage.removeItem("chatHistory");
+            chatWindow.appendChild(wrapper);
+        });
+        if (stored.length) {
+            chatWindow.scrollTo({ top: chatWindow.scrollHeight });
         }
+    };
+
+    const saveMessage = (author, message) => {
+        const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        history.push({
+            author,
+            message,
+            timestamp: new Date().toLocaleTimeString("ar-EG", { hour: "numeric", minute: "2-digit" })
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-40)));
+    };
+
+    chatForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const message = chatInput.value.trim();
+        if (!message) return;
+        appendMessage("user", message);
+        saveMessage("user", message);
+        chatInput.value = "";
+        showTypingIndicator();
+
+        setTimeout(() => {
+            removeTypingIndicator();
+            const reply = getAIResponse(message);
+            appendMessage("ai", reply);
+            saveMessage("ai", reply);
+        }, 700 + Math.random() * 600);
     });
 
-    // تحميل سجل المحادثة عند البدء
-    loadChatHistory();
+    clearChatBtn?.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        chatWindow.innerHTML = "";
+        appendMessage("ai", "تم مسح السجل السابق. أنا جاهز لمساعدتك من جديد!");
+    });
+
+    loadHistory();
 });

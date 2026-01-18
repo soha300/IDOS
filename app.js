@@ -1,83 +1,292 @@
-// تحسين app.js - إضافة معالجة الأخطاء
 document.addEventListener("DOMContentLoaded", () => {
-    // التحقق من توفر العناصر قبل استخدامها
-    const safeQuerySelector = (selector) => {
-        try {
-            return document.querySelector(selector);
-        } catch (error) {
-            console.warn(`Element not found: ${selector}`, error);
-            return null;
-        }
-    };
+    const body = document.body;
+    const preloader = document.getElementById("preloader");
+    const navToggle = document.querySelector(".nav-toggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const timeline = document.getElementById("insightsTimeline");
 
-    // العناصر مع التحقق من وجودها
-    const elements = {
-        body: document.body,
-        preloader: document.getElementById("preloader"),
-        navToggle: safeQuerySelector(".nav-toggle"),
-        mobileMenu: document.getElementById("mobileMenu"),
-        updateVitalsBtn: document.getElementById("updateVitalsBtn"),
-        fingerCheckBtn: document.getElementById("fingerCheckBtn"),
-        fingerDialog: document.getElementById("fingerDialog"),
-        closeFingerDialog: document.getElementById("closeFingerDialog"),
-        fingerResult: document.getElementById("fingerResult"),
-        contactForm: document.getElementById("contactForm"),
-        contactFeedback: document.getElementById("contactFeedback"),
-        timeline: document.getElementById("insightsTimeline"),
-        bpValue: document.getElementById("bpValue"),
-        bpStatus: document.getElementById("bpStatus"),
-        glucoseValue: document.getElementById("glucoseValue"),
-        glucoseStatus: document.getElementById("glucoseStatus"),
-        pulseValue: document.getElementById("pulseValue"),
-        pulseStatus: document.getElementById("pulseStatus")
-    };
+    const bpValue = document.getElementById("bpValue");
+    const bpStatus = document.getElementById("bpStatus");
+    const glucoseValue = document.getElementById("glucoseValue");
+    const glucoseStatus = document.getElementById("glucoseStatus");
+    const pulseValue = document.getElementById("pulseValue");
+    const pulseStatus = document.getElementById("pulseStatus");
 
-    // التأكد من أن القيم الافتراضية موجودة
-    const ensureDefaultValues = () => {
-        if (elements.bpValue && !elements.bpValue.textContent) {
-            elements.bpValue.textContent = "120/80";
-        }
-        if (elements.glucoseValue && !elements.glucoseValue.textContent) {
-            elements.glucoseValue.textContent = "98 mg/dL";
-        }
-        if (elements.pulseValue && !elements.pulseValue.textContent) {
-            elements.pulseValue.textContent = "72 bpm";
-        }
+    const pages = document.querySelectorAll(".page");
+
+    // عناصر تسجيل الدخول والواجهات
+    const loginBtn = document.getElementById("loginBtn");
+    const mobileLoginBtn = document.getElementById("mobileLoginBtn");
+    const loginModal = document.getElementById("loginModal");
+    const successModal = document.getElementById("successModal");
+    const closeLoginModal = document.getElementById("closeLoginModal");
+    const closeSuccessModal = document.getElementById("closeSuccessModal");
+    const continueBtn = document.getElementById("continueBtn");
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
+    const loginSection = document.getElementById("loginSection");
+    const userSection = document.getElementById("userSection");
+    const authSection = document.getElementById("authSection");
+    const mobileAuthSection = document.getElementById("mobileAuthSection");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userName = document.getElementById("userName");
+    const userEmail = document.getElementById("userEmail");
+
+    // إضافة أنماط CSS للحركات
+    const addButtonStyles = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+            /* تأثيرات الحركة للأزرار */
+            .btn-animate {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                transform: translateY(0) scale(1) !important;
+                position: relative !important;
+                overflow: hidden !important;
+            }
+            
+            .btn-animate:hover {
+                transform: translateY(-2px) scale(1.02) !important;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            .btn-animate:active {
+                transform: translateY(0) scale(0.98) !important;
+                transition-duration: 0.1s !important;
+            }
+            
+            /* تأثير الموجة عند النقر */
+            .btn-animate::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: translate(-50%, -50%);
+                transition: width 0.3s, height 0.3s;
+            }
+            
+            .btn-animate:active::after {
+                width: 100px;
+                height: 100px;
+            }
+            
+            /* تأثيرات خاصة لأزرار الطوارئ */
+            .emergency-btn {
+                animation: pulse-gentle 2s infinite !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .emergency-btn:hover {
+                animation: none !important;
+                transform: translateY(-3px) scale(1.05) !important;
+                box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4) !important;
+            }
+            
+            @keyframes pulse-gentle {
+                0%, 100% {
+                    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+                }
+                50% {
+                    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+                }
+            }
+            
+            /* تأثيرات لأزرار التسجيل */
+            .btn-login, .btn-logout {
+                transition: all 0.3s ease !important;
+                position: relative !important;
+            }
+            
+            .btn-login:hover, .btn-logout:hover {
+                transform: translateX(-5px) !important;
+                padding-right: 15px !important;
+            }
+            
+            /* تأثيرات لأزرار النوافذ المنبثقة */
+            dialog button {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            
+            dialog button:hover {
+                transform: translateY(-2px) !important;
+            }
+            
+            dialog button:active {
+                transform: translateY(0) !important;
+            }
+            
+            /* تأثيرات لأزرار القائمة */
+            .nav-toggle {
+                transition: all 0.3s ease !important;
+            }
+            
+            .nav-toggle:hover {
+                transform: rotate(90deg) !important;
+            }
+            
+            /* تأثيرات لأزرار الـ Accordion */
+            .accordion-toggle {
+                transition: all 0.3s ease !important;
+            }
+            
+            .accordion-toggle:hover {
+                transform: translateX(5px) !important;
+            }
+            
+            .accordion-toggle[aria-expanded="true"] {
+                transform: rotate(45deg) !important;
+            }
+            
+            /* تأثيرات التحميل */
+            .loading-spinner {
+                animation: spin 1s linear infinite !important;
+            }
+            
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            /* تأثيرات للروابط */
+            a:not(.btn-animate) {
+                transition: all 0.3s ease !important;
+                position: relative !important;
+            }
+            
+            a:not(.btn-animate):hover {
+                transform: translateY(-1px) !important;
+            }
+            
+            a:not(.btn-animate)::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 2px;
+                bottom: -2px;
+                left: 0;
+                background: currentColor;
+                transition: width 0.3s ease;
+            }
+            
+            a:not(.btn-animate):hover::after {
+                width: 100%;
+            }
+        `;
+        document.head.appendChild(style);
     };
 
     const hideLoader = () => {
-        if (!elements.body.classList.contains("loading")) return;
-        elements.body.classList.remove("loading");
-        elements.preloader?.classList.add("preloader--hidden");
-        document.querySelectorAll(".page").forEach((page) => page.classList.add("is-visible"));
-        
-        ensureDefaultValues();
+        if (!body.classList.contains("loading")) return;
+        body.classList.remove("loading");
+        preloader?.classList.add("preloader--hidden");
+        pages.forEach((page) => page.classList.add("is-visible"));
     };
 
     window.addEventListener("load", () => {
         setTimeout(hideLoader, 450);
     });
 
-    // في حال عدم وصول حدث load لأي سبب، نخفي الـ Loader بعد ثانيتين ونصف
     setTimeout(hideLoader, 2500);
 
-    if (elements.navToggle) {
-        elements.navToggle.addEventListener("click", () => {
-            const expanded = elements.navToggle.getAttribute("aria-expanded") === "true";
-            elements.navToggle.setAttribute("aria-expanded", String(!expanded));
-            if (elements.mobileMenu) {
-                elements.mobileMenu.hidden = expanded;
+    // تطبيق تأثيرات الحركة على جميع الأزرار
+    const applyButtonAnimations = () => {
+        // جميع أنواع الأزرار
+        const buttons = document.querySelectorAll(`
+            button:not(.nav-toggle):not(.accordion-toggle),
+            .btn,
+            [class*="btn-"],
+            .emergency-btn,
+            .btn-login,
+            .btn-logout,
+            dialog button,
+            input[type="submit"],
+            input[type="button"]
+        `);
+        
+        buttons.forEach(button => {
+            if (!button.classList.contains('btn-animate')) {
+                button.classList.add('btn-animate');
             }
+        });
+        
+        // إضافة تأثيرات خاصة لأزرار القائمة
+        if (navToggle) {
+            navToggle.classList.add('btn-animate');
+        }
+        
+        // إضافة تأثيرات لأزرار الـ Accordion
+        document.querySelectorAll('.accordion-toggle').forEach(toggle => {
+            toggle.classList.add('btn-animate');
+        });
+        
+        console.log(`تم تطبيق تأثيرات الحركة على ${buttons.length} زر`);
+    };
+
+    if (navToggle) {
+        navToggle.addEventListener("click", () => {
+            const expanded = navToggle.getAttribute("aria-expanded") === "true";
+            navToggle.setAttribute("aria-expanded", String(!expanded));
+            mobileMenu.hidden = expanded;
         });
     }
 
-    elements.mobileMenu?.querySelectorAll("a").forEach((link) => {
+    mobileMenu?.querySelectorAll("a").forEach((link) => {
         link.addEventListener("click", () => {
-            elements.navToggle?.setAttribute("aria-expanded", "false");
-            if (elements.mobileMenu) {
-                elements.mobileMenu.hidden = true;
-            }
+            navToggle?.setAttribute("aria-expanded", "false");
+            mobileMenu.hidden = true;
         });
+    });
+
+    // وظائف تسجيل الدخول والنوافذ المنبثقة
+    const openLoginModal = () => {
+        loginModal?.showModal();
+    };
+
+    const closeLoginModalFunc = () => {
+        loginModal?.close();
+    };
+
+    const openSuccessModal = () => {
+        successModal?.showModal();
+    };
+
+    const closeSuccessModalFunc = () => {
+        successModal?.close();
+    };
+
+    // إضافة مستمعي الأحداث للنوافذ المنبثقة
+    loginBtn?.addEventListener("click", openLoginModal);
+    mobileLoginBtn?.addEventListener("click", openLoginModal);
+    closeLoginModal?.addEventListener("click", closeLoginModalFunc);
+    closeSuccessModal?.addEventListener("click", closeSuccessModalFunc);
+    continueBtn?.addEventListener("click", closeSuccessModalFunc);
+
+    // إغلاق النافذة المنبثقة بالنقر خارجها
+    loginModal?.addEventListener("click", (e) => {
+        const dialogDimensions = loginModal.getBoundingClientRect();
+        if (
+            e.clientX < dialogDimensions.left ||
+            e.clientX > dialogDimensions.right ||
+            e.clientY < dialogDimensions.top ||
+            e.clientY > dialogDimensions.bottom
+        ) {
+            closeLoginModalFunc();
+        }
+    });
+
+    successModal?.addEventListener("click", (e) => {
+        const dialogDimensions = successModal.getBoundingClientRect();
+        if (
+            e.clientX < dialogDimensions.left ||
+            e.clientX > dialogDimensions.right ||
+            e.clientY < dialogDimensions.top ||
+            e.clientY > dialogDimensions.bottom
+        ) {
+            closeSuccessModalFunc();
+        }
     });
 
     // Vital signs logic
@@ -103,106 +312,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const setChipStatus = (chip, status) => {
-        if (!chip) return;
         chip.textContent = status.text;
         chip.style.color = status.color;
         chip.style.backgroundColor = status.bg;
     };
-
-    elements.updateVitalsBtn?.addEventListener("click", () => {
-        const systolic = Math.floor(Math.random() * 40) + 100;
-        const diastolic = Math.floor(Math.random() * 30) + 60;
-        const glucose = Math.floor(Math.random() * 90) + 70;
-        const pulse = Math.floor(Math.random() * 60) + 55;
-
-        if (elements.bpValue) {
-            elements.bpValue.textContent = `${systolic}/${diastolic}`;
-        }
-        setChipStatus(elements.bpStatus, evaluateStatus([systolic, diastolic], "bp"));
-
-        if (elements.glucoseValue) {
-            elements.glucoseValue.textContent = `${glucose} mg/dL`;
-        }
-        setChipStatus(elements.glucoseStatus, evaluateStatus(glucose, "glucose"));
-
-        if (elements.pulseValue) {
-            elements.pulseValue.textContent = `${pulse} bpm`;
-        }
-        setChipStatus(elements.pulseStatus, evaluateStatus(pulse, "pulse"));
-
-        appendTimelineItem("تم تحديث المؤشرات الحيوية بنجاح.");
-    });
-
-    const appendTimelineItem = (text) => {
-        if (!elements.timeline) return;
-        if (elements.timeline.querySelector(".timeline__item") && elements.timeline.children.length === 1 && elements.timeline.firstElementChild.textContent.includes("سيتم عرض")) {
-            elements.timeline.innerHTML = "";
-        }
-        const li = document.createElement("li");
-        li.className = "timeline__item";
-        li.textContent = `${text} (${new Date().toLocaleTimeString("ar-EG", { hour: "numeric", minute: "2-digit" })})`;
-        elements.timeline.prepend(li);
-    };
-
-    // Finger scan modal
-    elements.fingerCheckBtn?.addEventListener("click", () => {
-        if (elements.fingerResult) {
-            elements.fingerResult.textContent = "جاري قراءة البيانات الحيوية...";
-        }
-        const fingerScan = elements.fingerDialog?.querySelector(".finger-scan");
-        if (elements.fingerDialog) {
-            elements.fingerDialog.showModal();
-        }
-        requestAnimationFrame(() => {
-            fingerScan?.classList.add("finger-scan--active");
-        });
-        setTimeout(() => {
-            if (elements.fingerResult) {
-                elements.fingerResult.textContent = "تم تحليل معدل النبض والأكسجين. النتائج ضمن الحدود الطبيعية.";
-            }
-            appendTimelineItem("اكتمل فحص البصمة بنجاح.");
-        }, 2400);
-    });
-
-    elements.closeFingerDialog?.addEventListener("click", () => {
-        const fingerScan = elements.fingerDialog?.querySelector(".finger-scan");
-        if (elements.fingerDialog) {
-            elements.fingerDialog.close();
-        }
-        fingerScan?.classList.remove("finger-scan--active");
-    });
-
-    elements.fingerDialog?.addEventListener("close", () => {
-        const fingerScan = elements.fingerDialog?.querySelector(".finger-scan");
-        fingerScan?.classList.remove("finger-scan--active");
-    });
-
-    // Contact form
-    elements.contactForm?.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const name = document.getElementById("contactName")?.value.trim();
-        const email = document.getElementById("contactEmail")?.value.trim();
-        const message = document.getElementById("contactMessage")?.value.trim();
-
-        if (!name || !email || !message) {
-            if (elements.contactFeedback) {
-                elements.contactFeedback.hidden = false;
-                elements.contactFeedback.textContent = "يرجى تعبئة جميع الحقول قبل الإرسال.";
-                elements.contactFeedback.style.backgroundColor = "rgba(239, 68, 68, 0.12)";
-                elements.contactFeedback.style.color = "#b91c1c";
-            }
-            return;
-        }
-
-        if (elements.contactFeedback) {
-            elements.contactFeedback.hidden = false;
-            elements.contactFeedback.textContent = `شكرًا لك يا ${name}! سنعود إليك عبر البريد ${email} خلال ٢٤ ساعة.`;
-            elements.contactFeedback.style.backgroundColor = "rgba(59, 130, 246, 0.12)";
-            elements.contactFeedback.style.color = "var(--color-primary-dark)";
-        }
-        elements.contactForm?.reset();
-        appendTimelineItem("تم إرسال نموذج التواصل بنجاح.");
-    });
 
     // Accordion
     document.querySelectorAll(".accordion-toggle").forEach((toggle) => {
@@ -218,26 +331,643 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Restore timeline from storage if available
     const storedTimeline = JSON.parse(localStorage.getItem("timelineEntries") || "[]");
-    if (storedTimeline.length && elements.timeline) {
-        elements.timeline.innerHTML = "";
+    if (storedTimeline.length && timeline) {
+        timeline.innerHTML = "";
         storedTimeline.forEach((entry) => {
             const li = document.createElement("li");
             li.className = "timeline__item";
             li.textContent = entry;
-            elements.timeline.appendChild(li);
+            timeline.appendChild(li);
         });
     }
 
     const saveTimeline = () => {
-        if (!elements.timeline) return;
-        const items = Array.from(elements.timeline.querySelectorAll(".timeline__item")).map((item) => item.textContent);
+        if (!timeline) return;
+        const items = Array.from(timeline.querySelectorAll(".timeline__item")).map((item) => item.textContent);
         localStorage.setItem("timelineEntries", JSON.stringify(items.slice(0, 6)));
     };
 
     const observer = new MutationObserver(saveTimeline);
-    if (elements.timeline) {
-        observer.observe(elements.timeline, { childList: true });
+    if (timeline) {
+        observer.observe(timeline, { childList: true });
     }
+
+    // نظام تسجيل الدخول المتكامل
+    const users = [
+        { email: 'user@example.com', password: '123456', name: 'أحمد محمد' },
+        { email: 'test@test.com', password: 'test123', name: 'سارة أحمد' }
+    ];
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        return password.length >= 6;
+    };
+
+    const showMessage = (message, type = 'error') => {
+        if (!loginMessage) return;
+        
+        loginMessage.innerHTML = '';
+        loginMessage.className = `message message--${type}`;
+        
+        const messageContent = document.createElement('div');
+        messageContent.innerHTML = `
+            <span class="message__icon">${type === 'success' ? '✅' : '⚠️'}</span>
+            <span class="message__text">${message}</span>
+        `;
+        
+        loginMessage.appendChild(messageContent);
+        loginMessage.style.display = 'block';
+
+        if (type === 'success') {
+            setTimeout(() => {
+                loginMessage.style.display = 'none';
+            }, 5000);
+        }
+    };
+
+    const showLoading = (show = true) => {
+        const submitBtn = loginForm?.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
+
+        if (show) {
+            submitBtn.innerHTML = `
+                <div class="loading-spinner"></div>
+                جاري تسجيل الدخول...
+            `;
+            submitBtn.disabled = true;
+        } else {
+            submitBtn.innerHTML = 'تسجيل الدخول';
+            submitBtn.disabled = false;
+        }
+    };
+
+    const updateAuthUI = (user = null) => {
+        if (user) {
+            // المستخدم مسجل الدخول
+            if (loginSection) loginSection.style.display = 'none';
+            if (userSection) userSection.style.display = 'block';
+            if (userName) userName.textContent = user.name;
+            if (userEmail) userEmail.textContent = user.email;
+            
+            // تحديث القائمة
+            const authHTML = `
+                <div class="user-nav">
+                    <span class="user-greeting">مرحباً، ${user.name}</span>
+                    <button class="btn-logout btn-animate" id="navLogoutBtn">تسجيل الخروج</button>
+                </div>
+            `;
+            
+            if (authSection) authSection.innerHTML = authHTML;
+            if (mobileAuthSection) mobileAuthSection.innerHTML = authHTML;
+            
+            // إضافة مستمعي الأحداث لأزرار تسجيل الخروج
+            document.getElementById('navLogoutBtn')?.addEventListener('click', handleLogout);
+            
+        } else {
+            // المستخدم غير مسجل الدخول
+            if (loginSection) loginSection.style.display = 'block';
+            if (userSection) userSection.style.display = 'none';
+            
+            const authHTML = `
+                <a href="#loginSection" class="btn-login btn-animate">تسجيل الدخول</a>
+            `;
+            
+            if (authSection) authSection.innerHTML = authHTML;
+            if (mobileAuthSection) mobileAuthSection.innerHTML = authHTML;
+            
+            // إضافة مستمع الأحداث للتمرير إلى قسم تسجيل الدخول
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('loginSection').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                });
+            });
+        }
+        
+        // تحديث القائمة الجانبية للموبايل
+        updateMobileSidebarUser();
+        
+        // إعادة تطبيق تأثيرات الحركة بعد تحديث الـ UI
+        setTimeout(applyButtonAnimations, 100);
+    };
+
+    const handleLogin = async (email, password, rememberMe) => {
+        showLoading(true);
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                showMessage(`مرحباً بعودتك، ${user.name}!`, 'success');
+                
+                const sessionData = {
+                    email: user.email,
+                    name: user.name,
+                    loggedIn: true,
+                    timestamp: new Date().toISOString()
+                };
+                
+                if (rememberMe) {
+                    localStorage.setItem('userSession', JSON.stringify(sessionData));
+                } else {
+                    sessionStorage.setItem('userSession', JSON.stringify(sessionData));
+                }
+                
+                updateAuthUI(user);
+                
+                // إغلاق نافذة التسجيل وفتح نافذة النجاح
+                closeLoginModalFunc();
+                setTimeout(() => {
+                    openSuccessModal();
+                }, 300);
+                
+            } else {
+                showMessage('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+            }
+            
+        } catch (error) {
+            showMessage('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى');
+        } finally {
+            showLoading(false);
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('userSession');
+        sessionStorage.removeItem('userSession');
+        updateAuthUI(null);
+        showMessage('تم تسجيل الخروج بنجاح', 'success');
+    };
+
+    const checkExistingSession = () => {
+        const sessionData = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+        
+        if (sessionData) {
+            const user = JSON.parse(sessionData);
+            if (user.loggedIn) {
+                updateAuthUI(user);
+                return;
+            }
+        }
+        
+        updateAuthUI(null);
+    };
+
+    // معالجة نموذج تسجيل الدخول
+    loginForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        
+        const email = document.getElementById("email")?.value.trim();
+        const password = document.getElementById("password")?.value;
+        const rememberMe = document.getElementById("rememberMe")?.checked;
+
+        if (!validateEmail(email)) {
+            showMessage('يرجى إدخال بريد إلكتروني صحيح');
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            showMessage('كلمة المرور يجب أن تكون على الأقل 6 أحرف');
+            return;
+        }
+
+        handleLogin(email, password, rememberMe);
+    });
+
+    // إضافة مستمع الأحداث لزر تسجيل الخروج
+    logoutBtn?.addEventListener('click', handleLogout);
+
+    // إضافة تأثيرات للحقول
+    const addInputEffects = () => {
+        const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.type === 'email' && this.value) {
+                    if (validateEmail(this.value)) {
+                        this.style.borderColor = '#22c55e';
+                    } else {
+                        this.style.borderColor = '#ef4444';
+                    }
+                }
+            });
+        });
+    };
+
+    // إنشاء القائمة الجانبية للداشبورد
+    const createDashboardSidebar = () => {
+        // التحقق مما إذا كانت القائمة موجودة بالفعل
+        if (document.getElementById('dashboardSidebar')) return;
+        
+        const sidebar = document.createElement('div');
+        sidebar.id = 'dashboardSidebar';
+        sidebar.className = 'dashboard-sidebar';
+        sidebar.innerHTML = `
+            <div class="dashboard-sidebar__overlay" id="dashboardSidebarOverlay"></div>
+            <div class="dashboard-sidebar__content">
+                <div class="dashboard-sidebar__header">
+                    <div class="dashboard-sidebar__logo">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>IDOS</span>
+                    </div>
+                    <button class="dashboard-sidebar__close" id="dashboardSidebarClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="dashboard-sidebar__nav">
+                    <a href="index.html" class="dashboard-sidebar__link">
+                        <i class="fas fa-home"></i>
+                        <span>الرئيسية</span>
+                    </a>
+                    <a href="diagnosis.html" class="dashboard-sidebar__link">
+                        <i class="fas fa-diagnoses"></i>
+                        <span>التشخيص</span>
+                    </a>
+                    <a href="chat.html" class="dashboard-sidebar__link">
+                        <i class="fas fa-comments"></i>
+                        <span>محادثة</span>
+                    </a>
+                    <a href="hospitals.html" class="dashboard-sidebar__link">
+                        <i class="fas fa-hospital"></i>
+                        <span>المستشفيات</span>
+                    </a>
+                    <a href="settings.html" class="dashboard-sidebar__link">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                    <div class="dashboard-sidebar__user" id="dashboardSidebarUser">
+                        <!-- سيتم ملؤه ديناميكياً -->
+                    </div>
+                </nav>
+            </div>
+        `;
+        
+        document.body.appendChild(sidebar);
+        
+        // إضافة الأنماط
+        addDashboardSidebarStyles();
+        
+        // إضافة مستمعي الأحداث
+        setupDashboardSidebarEvents();
+    };
+    
+    // إضافة أنماط القائمة الجانبية
+    const addDashboardSidebarStyles = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+            /* أنماط القائمة الجانبية للداشبورد */
+            .dashboard-sidebar {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 85%;
+                max-width: 320px;
+                height: 100%;
+                background: white;
+                z-index: 10000;
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .dashboard-sidebar.active {
+                right: 0;
+            }
+            
+            .dashboard-sidebar__overlay {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .dashboard-sidebar__overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .dashboard-sidebar__content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            
+            .dashboard-sidebar__header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem 1rem;
+                background: var(--gradient-primary);
+                color: white;
+            }
+            
+            .dashboard-sidebar__logo {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+            
+            .dashboard-sidebar__close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0.5rem;
+                border-radius: 50%;
+                transition: background 0.3s;
+            }
+            
+            .dashboard-sidebar__close:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            .dashboard-sidebar__nav {
+                flex: 1;
+                padding: 1rem 0;
+            }
+            
+            .dashboard-sidebar__link {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 1.5rem;
+                text-decoration: none;
+                color: var(--dark);
+                transition: all 0.3s;
+                border-right: 3px solid transparent;
+            }
+            
+            .dashboard-sidebar__link:hover,
+            .dashboard-sidebar__link.active {
+                background: rgba(46, 134, 171, 0.1);
+                color: var(--primary);
+                border-right-color: var(--primary);
+            }
+            
+            .dashboard-sidebar__link i {
+                width: 20px;
+                text-align: center;
+            }
+            
+            .dashboard-sidebar__user {
+                padding: 1.5rem;
+                border-top: 1px solid #eee;
+                margin-top: auto;
+            }
+            
+            .dashboard-sidebar__user-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
+            
+            .dashboard-sidebar__user-avatar {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--gradient-primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+            
+            .dashboard-sidebar__user-details {
+                flex: 1;
+            }
+            
+            .dashboard-sidebar__user-name {
+                font-weight: 700;
+                margin-bottom: 0.25rem;
+            }
+            
+            .dashboard-sidebar__user-email {
+                font-size: 0.85rem;
+                color: var(--gray);
+            }
+            
+            .dashboard-sidebar__actions {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .dashboard-sidebar__action-btn {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+                background: none;
+                border: 1px solid #eee;
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: all 0.3s;
+                font-family: inherit;
+                font-size: 0.9rem;
+                color: var(--dark);
+            }
+            
+            .dashboard-sidebar__action-btn:hover {
+                background: rgba(46, 134, 171, 0.1);
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+            
+            .dashboard-sidebar__action-btn.logout {
+                color: var(--accent);
+                border-color: rgba(247, 108, 108, 0.3);
+            }
+            
+            .dashboard-sidebar__action-btn.logout:hover {
+                background: rgba(247, 108, 108, 0.1);
+            }
+            
+            /* تحسينات للشاشات الصغيرة */
+            @media (max-width: 480px) {
+                .dashboard-sidebar {
+                    width: 90%;
+                }
+            }
+            
+            @media (min-width: 769px) {
+                .dashboard-sidebar,
+                .dashboard-sidebar__overlay {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    };
+    
+    // إعداد أحداث القائمة الجانبية
+    const setupDashboardSidebarEvents = () => {
+        const sidebar = document.getElementById('dashboardSidebar');
+        const overlay = document.getElementById('dashboardSidebarOverlay');
+        const closeBtn = document.getElementById('dashboardSidebarClose');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        
+        // فتح القائمة
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', openDashboardSidebar);
+        }
+        
+        // إغلاق القائمة
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeDashboardSidebar);
+        }
+        
+        if (overlay) {
+            overlay.addEventListener('click', closeDashboardSidebar);
+        }
+        
+        // إغلاق القائمة عند النقر على رابط
+        document.querySelectorAll('.dashboard-sidebar__link').forEach(link => {
+            link.addEventListener('click', closeDashboardSidebar);
+        });
+        
+        // تحديث معلومات المستخدم في القائمة
+        updateDashboardSidebarUser();
+    };
+    
+    // فتح القائمة الجانبية
+    const openDashboardSidebar = () => {
+        const sidebar = document.getElementById('dashboardSidebar');
+        const overlay = document.getElementById('dashboardSidebarOverlay');
+        
+        if (sidebar && overlay) {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    };
+    
+    // إغلاق القائمة الجانبية
+    const closeDashboardSidebar = () => {
+        const sidebar = document.getElementById('dashboardSidebar');
+        const overlay = document.getElementById('dashboardSidebarOverlay');
+        
+        if (sidebar && overlay) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    };
+    
+    // تحديث معلومات المستخدم في القائمة الجانبية
+    const updateDashboardSidebarUser = () => {
+        const userSection = document.getElementById('dashboardSidebarUser');
+        if (!userSection) return;
+        
+        const userSession = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+        
+        if (userSession) {
+            try {
+                const userData = JSON.parse(userSession);
+                userSection.innerHTML = `
+                    <div class="dashboard-sidebar__user-info">
+                        <div class="dashboard-sidebar__user-avatar">${userData.name ? userData.name.charAt(0) : 'م'}</div>
+                        <div class="dashboard-sidebar__user-details">
+                            <div class="dashboard-sidebar__user-name">${userData.name || 'مستخدم'}</div>
+                            <div class="dashboard-sidebar__user-email">${userData.email || ''}</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-sidebar__actions">
+                        <button class="dashboard-sidebar__action-btn" onclick="window.location.href='settings.html'">
+                            <i class="fas fa-user-cog"></i>
+                            <span>إعدادات الحساب</span>
+                        </button>
+                        <button class="dashboard-sidebar__action-btn logout" id="dashboardSidebarLogout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>تسجيل الخروج</span>
+                        </button>
+                    </div>
+                `;
+                
+                // إضافة حدث تسجيل الخروج
+                document.getElementById('dashboardSidebarLogout')?.addEventListener('click', () => {
+                    localStorage.removeItem('userSession');
+                    sessionStorage.removeItem('userSession');
+                    window.location.reload();
+                });
+                
+            } catch (e) {
+                console.error('خطأ في تحليل بيانات المستخدم:', e);
+                userSection.innerHTML = `
+                    <div class="dashboard-sidebar__actions">
+                        <button class="dashboard-sidebar__action-btn" onclick="window.location.href='login.html'">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>تسجيل الدخول</span>
+                        </button>
+                    </div>
+                `;
+            }
+        } else {
+            userSection.innerHTML = `
+                <div class="dashboard-sidebar__actions">
+                    <button class="dashboard-sidebar__action-btn" onclick="window.location.href='login.html'">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>تسجيل الدخول</span>
+                    </button>
+                </div>
+            `;
+        }
+    };
+
+    // تهيئة الصفحة
+    addButtonStyles(); // إضافة الأنماط أولاً
+    checkExistingSession();
+    addInputEffects();
+    applyButtonAnimations(); // تطبيق الحركات على الأزرار
+    createDashboardSidebar(); // إنشاء القائمة الجانبية للداشبورد
+
+    // إضافة تأثير النقر على أزرار الطوارئ
+    document.querySelectorAll('.emergency-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+            
+            console.log('تم النقر على زر الطوارئ:', this.querySelector('strong').textContent);
+        });
+    });
+
+    // إعادة تطبيق الحركات عند تغيير حجم النافذة (للتأكد من تطبيقها على جميع العناصر)
+    window.addEventListener('resize', () => {
+        setTimeout(applyButtonAnimations, 300);
+    });
 });
 
 // Google Maps callback
@@ -292,10 +1022,10 @@ window.initMap = function () {
             icon: {
                 path: google.maps.SymbolPath.CIRCLE,
                 scale: 8,
-                fillColor: "#7c3aed",
+                fillColor: "#2563eb",
                 fillOpacity: 0.9,
                 strokeWeight: 2,
-                strokeColor: "#5b21b6"
+                strokeColor: "#1d4ed8"
             }
         });
 
@@ -304,6 +1034,7 @@ window.initMap = function () {
                 <div style="text-align:right; min-width:200px;">
                     <strong>${hospital.name}</strong>
                     <p style="margin:6px 0;">${hospital.address}</p>
+                    <p style="margin:6px 0; color: #ef4444; font-weight: bold;">☎️ 123</p>
                     <a href="https://www.google.com/maps/dir/?api=1&destination=${hospital.position.lat},${hospital.position.lng}" target="_blank" rel="noopener">عرض الاتجاهات</a>
                 </div>
             `);

@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المستشفيات - IDOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- إضافة مكتبة Leaflet للخرائط -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #C4B5FD;
+            --accent: #F472B6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --light: #F8F9FA;
+            --dark: #212529;
+            --gray: #6C757D;
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            --gradient-secondary: linear-gradient(135deg, #C4B5FD 0%, #8B5CF6 100%);
+            --gradient-accent: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #faf5ff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-left: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .page-description {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search and Filters */
+        .search-section {
+            background: white;
+            padding: 2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid #ddd;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .filter-select {
+            padding: 1rem;
+            border-radius: var(--radius);
+            border: 1px solid #ddd;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            background: white;
+            min-width: 180px;
+        }
+
+        /* Main Content Layout */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        /* Hospitals List */
+        .hospitals-list {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            height: fit-content;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .list-header {
+            padding: 1.5rem;
+            background: var(--light);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .hospitals-container {
+            padding: 1rem;
+        }
+
+        .hospital-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .hospital-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .hospital-card.active {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .hospital-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hospital-distance {
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .hospital-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .hospital-specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .specialty-tag {
+            background: var(--light);
+            color: var(--primary);
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .hospital-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--gray);
+        }
+
+        .hospital-actions {
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        /* Map Section */
+        .map-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            height: 800px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-header {
+            padding: 1.5rem;
+            background: var(--light);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .map-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .map-container {
+            flex: 1;
+            background: #e9ecef;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #46b885;
+            transform: translateY(-2px);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        /* Location Indicator */
+        .location-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            max-width: 300px;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-title {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .location-coords {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .map-section {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .map-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .location-indicator {
+                left: 1rem;
+                right: 1rem;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 2rem 0;
+            }
+            
+            .hospital-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-stethoscope logo-icon"></i>
+                <span class="logo-text">IDOS</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="diagnosis.html" class="nav-link"><i class="fas fa-diagnoses"></i> التشخيص</a></li>
+                <li><a href="chat.html" class="nav-link"><i class="fas fa-comments"></i> محادثة</a></li>
+                <li><a href="#" class="nav-link active"><i class="fas fa-hospital"></i> المستشفيات</a></li>
+                <li><a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> الإعدادات</a></li>
+            </ul>
+            
+            <div class="user-actions">
+                <div class="user-profile">
+                    <div class="user-avatar">م</div>
+                    <span>محمد أحمد</span>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">المستشفيات والمراكز الطبية</h1>
+            <p class="page-description">ابحث عن أفضل المستشفيات والمراكز الطبية بالقرب من موقعك</p>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن مستشفى، تخصص، أو منطقة...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <select class="filter-select" id="cityFilter">
+                <option value="">جميع المدن</option>
+                <option value="الرياض">الرياض</option>
+                <option value="جدة">جدة</option>
+                <option value="الدمام">الدمام</option>
+                <option value="مكة">مكة</option>
+                <option value="المدينة">المدينة</option>
+            </select>
+            
+            <select class="filter-select" id="specialtyFilter">
+                <option value="">جميع التخصصات</option>
+                <option value="قلب">أمراض القلب</option>
+                <option value="عظام">العظام</option>
+                <option value="أطفال">طب الأطفال</option>
+                <option value="نساء">النساء والتوليد</option>
+                <option value="عيون">طب العيون</option>
+                <option value="أسنان">طب الأسنان</option>
+            </select>
+            
+            <select class="filter-select" id="typeFilter">
+                <option value="">جميع الأنواع</option>
+                <option value="حكومي">مستشفى حكومي</option>
+                <option value="خاص">مستشفى خاص</option>
+                <option value="تخصصي">مستشفى تخصصي</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Hospitals List -->
+        <div class="hospitals-list">
+            <div class="list-header">
+                <h2 class="list-title">المستشفيات القريبة</h2>
+                <span id="hospitalsCount">0 مستشفى</span>
+            </div>
+            <div class="hospitals-container" id="hospitalsContainer">
+                <!-- سيتم ملء هذا القسم بالبيانات من JavaScript -->
+            </div>
+            
+            <div id="loadingIndicator" class="loading">
+                <div class="loading-spinner"></div>
+                <p>جاري تحميل البيانات...</p>
+            </div>
+            
+            <div id="noResults" class="no-results" style="display: none;">
+                <i class="fas fa-search no-results-icon"></i>
+                <h3>لم نعثر على نتائج</h3>
+                <p>جرب تغيير كلمات البحث أو الفلاتر</p>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="map-section">
+            <div class="map-header">
+                <h2 class="map-title"><i class="fas fa-map-marked-alt"></i> خريطة المستشفيات</h2>
+                <div class="map-controls">
+                    <button class="btn btn-success" id="locateMeBtn">
+                        <i class="fas fa-location-arrow"></i> موقعي الحالي
+                    </button>
+                    <button class="btn btn-outline" id="resetViewBtn">
+                        <i class="fas fa-sync-alt"></i> إعادة التعيين
+                    </button>
+                </div>
+            </div>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Indicator -->
+    <div class="location-indicator" id="locationIndicator" style="display: none;">
+        <i class="fas fa-location-dot" style="color: var(--primary); font-size: 1.5rem;"></i>
+        <div class="location-info">
+            <div class="location-title">موقعك الحالي</div>
+            <div class="location-coords" id="locationCoords">جاري تحديد الموقع...</div>
+        </div>
+        <button class="btn btn-outline" id="hideLocationBtn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>IDOS</h3>
+                <ul class="footer-links">
+                    <li><a href="#">عن المنصة</a></li>
+                    <li><a href="#">كيفية الاستخدام</a></li>
+                    <li><a href="#">الأسئلة الشائعة</a></li>
+                    <li><a href="#">اتصل بنا</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>الخدمات</h3>
+                <ul class="footer-links">
+                    <li><a href="diagnosis.html">التشخيص الذكي</a></li>
+                    <li><a href="chat.html">المساعد الذكي</a></li>
+                    <li><a href="#">المستشفيات</a></li>
+                    <li><a href="#">المختبرات</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>الدعم</h3>
+                <ul class="footer-links">
+                    <li><a href="#">مركز المساعدة</a></li>
+                    <li><a href="#">الشروط والأحكام</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                    <li><a href="#">الإبلاغ عن مشكلة</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة &copy; 2023 IDOS</p>
+        </div>
+    </footer>
+
+<script>
+    // بيانات المستشفيات مع إحداثيات حقيقية لمدينة بنها
+    const hospitalsData = [
+        {
+            id: 1,
+            name: "مستشفى الراعي الصالح",
+            location: "بنها، حي شرق",
+            type: "خاص",
+            city: "بنها",
+            specialties: ["قلب", "عظام", "أطفال", "نساء", "باطنة", "جراحة"],
+            lat: 30.4654,
+            lng: 31.1851,
+            rating: 4.7,
+            waitTime: "10 دقيقة",
+            phone: "0133221001",
+            emergency: true
+        },
+        {
+            id: 2,
+            name: "مستشفى أول مايو التخصصي",
+            location: "بنها، شارع الجمهورية",
+            type: "تخصصي",
+            city: "بنها",
+            specialties: ["عظام", "باطنة", "جراحة", "أطفال", "نساء"],
+            lat: 30.4692,
+            lng: 31.1823,
+            rating: 4.5,
+            waitTime: "15 دقيقة",
+            phone: "0133221002",
+            emergency: true
+        },
+        {
+            id: 3,
+            name: "مستشفى جامعة بنها",
+            location: "بنها، منطقة الجامعة",
+            type: "حكومي",
+            city: "بنها",
+            specialties: ["قلب", "عظام", "أطفال", "نساء", "عيون", "أسنان", "باطنة"],
+            lat: 30.4756,
+            lng: 31.1789,
+            rating: 4.6,
+            waitTime: "20 دقيقة",
+            phone: "0133221003",
+            emergency: true
+        },
+        {
+            id: 4,
+            name: "مستشفى الأميري",
+            location: "بنها، وسط المدينة",
+            type: "خاص",
+            city: "بنها",
+            specialties: ["باطنة", "أطفال", "نساء", "عظام"],
+            lat: 30.4678,
+            lng: 31.1795,
+            rating: 4.4,
+            waitTime: "12 دقيقة",
+            phone: "0133221004",
+            emergency: true
+        },
+        {
+            id: 5,
+            name: "مستشفى الإيمان الخيري",
+            location: "بنها، حي غرب",
+            type: "خيري",
+            city: "بنها",
+            specialties: ["باطنة", "أطفال", "نساء"],
+            lat: 30.4632,
+            lng: 31.1768,
+            rating: 4.3,
+            waitTime: "8 دقيقة",
+            phone: "0133221005",
+            emergency: true
+        },
+        {
+            id: 6,
+            name: "مستشفى الشرطة بنها",
+            location: "بنها، منطقة الأمن المركزي",
+            type: "حكومي",
+            city: "بنها",
+            specialties: ["عظام", "جراحة", "باطنة", "طوارئ"],
+            lat: 30.4715,
+            lng: 31.1882,
+            rating: 4.5,
+            waitTime: "18 دقيقة",
+            phone: "0133221006",
+            emergency: true
+        },
+        {
+            id: 7,
+            name: "مستشفى بنها العام",
+            location: "بنها، شارع المستشفى",
+            type: "حكومي",
+            city: "بنها",
+            specialties: ["باطنة", "أطفال", "نساء", "عظام", "جراحة"],
+            lat: 30.4721,
+            lng: 31.1817,
+            rating: 4.2,
+            waitTime: "25 دقيقة",
+            phone: "0133221007",
+            emergency: true
+        },
+        {
+            id: 8,
+            name: "مستشفى النور التخصصي",
+            location: "بنها، حي الزهور",
+            type: "خاص",
+            city: "بنها",
+            specialties: ["عيون", "أسنان", "أنف وأذن وحنجرة"],
+            lat: 30.4689,
+            lng: 31.1841,
+            rating: 4.6,
+            waitTime: "10 دقيقة",
+            phone: "0133221008",
+            emergency: false
+        }
+    ];
+
+    // متغيرات عامة
+    let map;
+    let userLocation = null;
+    let userMarker = null;
+    let hospitalMarkers = [];
+    let currentHospitalLayer = null;
+
+    // عناصر DOM
+    const hospitalsContainer = document.getElementById('hospitalsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const cityFilter = document.getElementById('cityFilter');
+    const specialtyFilter = document.getElementById('specialtyFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const noResults = document.getElementById('noResults');
+    const locateMeBtn = document.getElementById('locateMeBtn');
+    const resetViewBtn = document.getElementById('resetViewBtn');
+    const locationIndicator = document.getElementById('locationIndicator');
+    const locationCoords = document.getElementById('locationCoords');
+    const hideLocationBtn = document.getElementById('hideLocationBtn');
+    const hospitalsCount = document.getElementById('hospitalsCount');
+
+    // تهيئة الخريطة
+    function initMap() {
+        // مركز الخريطة الافتراضي (بنها)
+        const defaultCenter = [30.4692, 31.1823];
+        
+        // إنشاء الخريطة
+        map = L.map('map').setView(defaultCenter, 14);
+        
+        // إضافة طبقة الخريطة الأساسية
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        // إضافة المستشفيات إلى الخريطة
+        addHospitalsToMap(hospitalsData);
+    }
+
+    // إضافة المستشفيات إلى الخريطة
+    function addHospitalsToMap(hospitals) {
+        // إزالة العلامات القديمة
+        hospitalMarkers.forEach(marker => map.removeLayer(marker));
+        hospitalMarkers = [];
+        
+        // إضافة علامات جديدة
+        hospitals.forEach(hospital => {
+            const hospitalIcon = L.divIcon({
+                html: `<div style="background-color: ${hospital.emergency ? '#F472B6' : '#8B5CF6'}; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-hospital"></i></div>`,
+                className: 'hospital-marker',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            
+            const marker = L.marker([hospital.lat, hospital.lng], { icon: hospitalIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <div style="text-align: right; min-width: 200px;">
+                        <h3 style="margin: 0 0 10px 0; color: #8B5CF6;">${hospital.name}</h3>
+                        <p style="margin: 0 0 5px 0; font-size: 14px;"><i class="fas fa-map-marker-alt"></i> ${hospital.location}</p>
+                        <p style="margin: 0 0 5px 0; font-size: 14px;"><i class="fas fa-star"></i> التقييم: ${hospital.rating}</p>
+                        <p style="margin: 0 0 10px 0; font-size: 14px;"><i class="fas fa-clock"></i> وقت الانتظار: ${hospital.waitTime}</p>
+                        <div style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;">
+                            ${hospital.specialties.map(spec => `<span style="background: #e9ecef; color: #8B5CF6; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${spec}</span>`).join('')}
+                        </div>
+                        <button onclick="viewHospitalDetails(${hospital.id})" style="background: #8B5CF6; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; width: 100%;">عرض التفاصيل</button>
+                    </div>
+                `);
+            
+            hospitalMarkers.push(marker);
+            
+            // إضافة حدث النقر لتمييز المستشفى
+            marker.on('click', function() {
+                highlightHospital(hospital.id);
+            });
+        });
+    }
+
+    // تمييز مستشفى معين على الخريطة والقائمة
+    function highlightHospital(hospitalId) {
+        // إزالة التمييز السابق
+        if (currentHospitalLayer) {
+            map.removeLayer(currentHospitalLayer);
+        }
+        
+        // البحث عن المستشفى
+        const hospital = hospitalsData.find(h => h.id === hospitalId);
+        if (!hospital) return;
+        
+        // إضافة دائرة تمييز حول المستشفى
+        currentHospitalLayer = L.circle([hospital.lat, hospital.lng], {
+            color: '#F472B6',
+            fillColor: '#F472B6',
+            fillOpacity: 0.1,
+            radius: 300
+        }).addTo(map);
+        
+        // تمييز البطاقة في القائمة
+        document.querySelectorAll('.hospital-card').forEach(card => {
+            card.classList.remove('active');
+            if (parseInt(card.dataset.id) === hospitalId) {
+                card.classList.add('active');
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+        
+        // فتح نافذة المعلومات الخاصة بالمستشفى
+        hospitalMarkers.forEach(marker => {
+            if (marker.getLatLng().lat === hospital.lat && 
+                marker.getLatLng().lng === hospital.lng) {
+                marker.openPopup();
+            }
+        });
+    }
+
+    // تحديد موقع المستخدم
+    function locateUser() {
+        if (!navigator.geolocation) {
+            alert('متصفحك لا يدعم خاصية تحديد الموقع');
+            return;
+        }
+        
+        locateMeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تحديد الموقع...';
+        locateMeBtn.disabled = true;
+        
+        navigator.geolocation.getCurrentPosition(
+            // في حالة النجاح
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                userLocation = { lat, lng };
+                
+                // تحديث مؤشر الموقع
+                locationCoords.textContent = `خط العرض: ${lat.toFixed(4)}, خط الطول: ${lng.toFixed(4)}`;
+                locationIndicator.style.display = 'flex';
+                
+                // إضافة أو تحديث علامة المستخدم
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                }
+                
+                const userIcon = L.divIcon({
+                    html: '<div style="background-color: #10B981; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-user"></i></div>',
+                    className: 'user-marker',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                userMarker = L.marker([lat, lng], { icon: userIcon })
+                    .addTo(map)
+                    .bindPopup('موقعك الحالي')
+                    .openPopup();
+                
+                // تكبير الخريطة إلى موقع المستخدم
+                map.setView([lat, lng], 15);
+                
+                // إعادة حساب المسافات وعرض المستشفيات القريبة
+                calculateDistancesAndDisplay();
+                
+                // إعادة تعيين زر تحديد الموقع
+                locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i> موقعي الحالي';
+                locateMeBtn.disabled = false;
+            },
+            // في حالة الفشل
+            function(error) {
+                console.error('خطأ في تحديد الموقع:', error);
+                
+                // استخدام موقع افتراضي في بنها في حالة فشل تحديد الموقع
+                const defaultLat = 30.4692;
+                const defaultLng = 31.1823;
+                
+                userLocation = { lat: defaultLat, lng: defaultLng };
+                
+                locationCoords.textContent = `خط العرض: ${defaultLat.toFixed(4)}, خط الطول: ${defaultLng.toFixed(4)} (موقع افتراضي)`;
+                locationIndicator.style.display = 'flex';
+                
+                // إضافة علامة المستخدم في الموقع الافتراضي
+                const userIcon = L.divIcon({
+                    html: '<div style="background-color: #F59E0B; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-user"></i></div>',
+                    className: 'user-marker',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                userMarker = L.marker([defaultLat, defaultLng], { icon: userIcon })
+                    .addTo(map)
+                    .bindPopup('موقعك الافتراضي (بنها)')
+                    .openPopup();
+                
+                map.setView([defaultLat, defaultLng], 14);
+                calculateDistancesAndDisplay();
+                
+                locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i> موقعي الحالي';
+                locateMeBtn.disabled = false;
+                
+                alert('تعذر تحديد موقعك بدقة. تم استخدام موقع افتراضي في بنها.');
+            },
+            // خيارات إضافية
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000
+            }
+        );
+    }
+
+    // حساب المسافات بين المستخدم والمستشفيات
+    function calculateDistancesAndDisplay() {
+        if (!userLocation) return;
+        
+        const hospitalsWithDistance = hospitalsData.map(hospital => {
+            const distance = calculateDistance(
+                userLocation.lat, userLocation.lng,
+                hospital.lat, hospital.lng
+            );
+            
+            return {
+                ...hospital,
+                distance: distance,
+                distanceText: distance < 1 ? 
+                    `${(distance * 1000).toFixed(0)} متر` : 
+                    `${distance.toFixed(1)} كم`
+            };
+        });
+        
+        // ترتيب المستشفيات حسب المسافة
+        hospitalsWithDistance.sort((a, b) => a.distance - b.distance);
+        
+        // عرض المستشفيات
+        displayHospitals(hospitalsWithDistance);
+    }
+
+    // حساب المسافة بين نقطتين باستخدام صيغة هافرساين
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // نصف قطر الأرض بالكيلومترات
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const distance = R * c;
+        return distance;
+    }
+
+    // عرض المستشفيات في القائمة
+    function displayHospitals(hospitals) {
+        hospitalsContainer.innerHTML = '';
+        
+        if (hospitals.length === 0) {
+            noResults.style.display = 'block';
+            hospitalsCount.textContent = '0 مستشفى';
+            return;
+        }
+        
+        noResults.style.display = 'none';
+        hospitalsCount.textContent = `${hospitals.length} مستشفى`;
+        
+        hospitals.forEach(hospital => {
+            const hospitalCard = document.createElement('div');
+            hospitalCard.className = 'hospital-card';
+            hospitalCard.dataset.id = hospital.id;
+            
+            hospitalCard.innerHTML = `
+                <div class="hospital-name">
+                    <span>${hospital.name}</span>
+                    ${hospital.distanceText ? `<span class="hospital-distance">${hospital.distanceText}</span>` : ''}
+                </div>
+                <div class="hospital-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>${hospital.location}</span>
+                </div>
+                <div class="hospital-specialties">
+                    ${hospital.specialties.map(spec => `<span class="specialty-tag">${spec}</span>`).join('')}
+                </div>
+                <div class="hospital-info">
+                    <div class="info-item">
+                        <i class="fas fa-star" style="color: gold;"></i>
+                        <span>${hospital.rating}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <span>${hospital.waitTime}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <span>${hospital.phone}</span>
+                    </div>
+                </div>
+                <div class="hospital-actions">
+                    <button class="btn btn-primary" onclick="viewHospitalDetails(${hospital.id})">
+                        <i class="fas fa-info-circle"></i> التفاصيل
+                    </button>
+                    <button class="btn btn-outline" onclick="callHospital('${hospital.phone}')">
+                        <i class="fas fa-phone"></i> اتصل
+                    </button>
+                    ${hospital.emergency ? '<span style="color: #F472B6; font-size: 0.8rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-bell"></i> طوارئ</span>' : ''}
+                </div>
+            `;
+            
+            // إضافة حدث النقر لتمييز المستشفى على الخريطة
+            hospitalCard.addEventListener('click', function() {
+                highlightHospital(hospital.id);
+            });
+            
+            hospitalsContainer.appendChild(hospitalCard);
+        });
+    }
+
+    // تصفية المستشفيات
+    function filterHospitals() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const city = cityFilter.value;
+        const specialty = specialtyFilter.value;
+        const type = typeFilter.value;
+        
+        let filteredHospitals = [...hospitalsData];
+        
+        // تطبيق الفلاتر
+        if (searchTerm) {
+            filteredHospitals = filteredHospitals.filter(hospital => 
+                hospital.name.toLowerCase().includes(searchTerm) || 
+                hospital.location.toLowerCase().includes(searchTerm) ||
+                hospital.specialties.some(s => s.includes(searchTerm))
+            );
+        }
+        
+        if (city) {
+            filteredHospitals = filteredHospitals.filter(hospital => hospital.city === city);
+        }
+        
+        if (specialty) {
+            filteredHospitals = filteredHospitals.filter(hospital => 
+                hospital.specialties.includes(specialty)
+            );
+        }
+        
+        if (type) {
+            filteredHospitals = filteredHospitals.filter(hospital => hospital.type === type);
+        }
+        
+        // إعادة حساب المسافات إذا كان موقع المستخدم معروفًا
+        if (userLocation) {
+            filteredHospitals = filteredHospitals.map(hospital => {
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    hospital.lat, hospital.lng
+                );
+                
+                return {
+                    ...hospital,
+                    distance: distance,
+                    distanceText: distance < 1 ? 
+                        `${(distance * 1000).toFixed(0)} متر` : 
+                        `${distance.toFixed(1)} كم`
+                };
+            });
+            
+            // ترتيب حسب المسافة
+            filteredHospitals.sort((a, b) => a.distance - b.distance);
+        }
+        
+        // تحديث الخريطة
+        addHospitalsToMap(filteredHospitals);
+        
+        // تحديث القائمة
+        displayHospitals(filteredHospitals);
+    }
+
+    // عرض تفاصيل المستشفى
+    function viewHospitalDetails(hospitalId) {
+        const hospital = hospitalsData.find(h => h.id === hospitalId);
+        if (hospital) {
+            // في التطبيق الحقيقي، يمكن فتح نافذة منبثقة أو صفحة تفاصيل
+            const details = `
+                <div style="text-align: right; padding: 20px;">
+                    <h2 style="color: #8B5CF6; margin-bottom: 15px;">${hospital.name}</h2>
+                    <div style="margin-bottom: 10px;"><strong>الموقع:</strong> ${hospital.location}</div>
+                    <div style="margin-bottom: 10px;"><strong>النوع:</strong> ${hospital.type}</div>
+                    <div style="margin-bottom: 10px;"><strong>التقييم:</strong> ${hospital.rating} / 5</div>
+                    <div style="margin-bottom: 10px;"><strong>وقت الانتظار:</strong> ${hospital.waitTime}</div>
+                    <div style="margin-bottom: 10px;"><strong>الهاتف:</strong> ${hospital.phone}</div>
+                    <div style="margin-bottom: 15px;"><strong>التخصصات:</strong> ${hospital.specialties.join('، ')}</div>
+                    <div style="margin-bottom: 15px;"><strong>خدمة الطوارئ:</strong> ${hospital.emergency ? 'نعم' : 'لا'}</div>
+                    <button onclick="callHospital('${hospital.phone}')" style="background: #8B5CF6; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-right: 10px;">اتصال فوري</button>
+                    <button onclick="highlightHospital(${hospital.id})" style="background: #10B981; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">عرض على الخريطة</button>
+                </div>
+            `;
+            
+            // إنشاء نافذة منبثقة مخصصة
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee;">
+                        <h3 style="margin: 0; color: #8B5CF6;">تفاصيل المستشفى</h3>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+                    </div>
+                    ${details}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // تمييز المستشفى على الخريطة
+            highlightHospital(hospitalId);
+        }
+    }
+
+    // الاتصال بالمستشفى
+    function callHospital(phoneNumber) {
+        if (confirm(`هل تريد الاتصال بـ ${phoneNumber}؟`)) {
+            // في التطبيق الفعلي، سيكون هذا استدعاءً لرقم الهاتف
+            alert(`جاري الاتصال بـ ${phoneNumber}...`);
+            // window.location.href = `tel:${phoneNumber}`;
+        }
+    }
+
+    // إعادة تعيين عرض الخريطة
+    function resetMapView() {
+        if (userLocation) {
+            map.setView([userLocation.lat, userLocation.lng], 15);
+        } else {
+            map.setView([30.4692, 31.1823], 14);
+        }
+        
+        if (currentHospitalLayer) {
+            map.removeLayer(currentHospitalLayer);
+            currentHospitalLayer = null;
+        }
+        
+        document.querySelectorAll('.hospital-card').forEach(card => {
+            card.classList.remove('active');
+        });
+    }
+
+    // إخفاء مؤشر الموقع
+    function hideLocationIndicator() {
+        locationIndicator.style.display = 'none';
+        if (userMarker) {
+            map.removeLayer(userMarker);
+            userMarker = null;
+        }
+        userLocation = null;
+        
+        // إعادة عرض المستشفيات بدون مسافات
+        displayHospitals(hospitalsData);
+    }
+
+    // تهيئة الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        // تحديث قائمة المدن لتشمل بنها فقط
+        cityFilter.innerHTML = `
+            <option value="">جميع المدن</option>
+            <option value="بنها" selected>بنها</option>
+        `;
+        
+        // تهيئة الخريطة
+        initMap();
+        
+        // عرض المستشفيات
+        displayHospitals(hospitalsData);
+        
+        // إخفاء مؤشر التحميل
+        loadingIndicator.style.display = 'none';
+        
+        // إضافة مستمعي الأحداث
+        searchInput.addEventListener('input', filterHospitals);
+        cityFilter.addEventListener('change', filterHospitals);
+        specialtyFilter.addEventListener('change', filterHospitals);
+        typeFilter.addEventListener('change', filterHospitals);
+        
+        locateMeBtn.addEventListener('click', locateUser);
+        resetViewBtn.addEventListener('click', resetMapView);
+        hideLocationBtn.addEventListener('click', hideLocationIndicator);
+        
+        // البحث عن الطوارئ عند النقر المزدوج على شريط البحث
+        searchInput.addEventListener('dblclick', function() {
+            const emergencyHospitals = hospitalsData.filter(h => h.emergency);
+            displayHospitals(emergencyHospitals);
+            addHospitalsToMap(emergencyHospitals);
+            alert('عرض المستشفيات التي تقدم خدمة الطوارئ فقط');
+        });
+    });
+</script>
+</body>
+</html>

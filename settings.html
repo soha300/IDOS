@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعدادات - IDOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8B5FBF;
+            --primary-dark: #6D3FA3;
+            --primary-light: #A78BFA;
+            --secondary: #C4B5FD;
+            --accent: #F472B6;
+            --success: #34D399;
+            --warning: #FBBF24;
+            --light: #FAF5FF;
+            --dark: #1F1F23;
+            --gray: #6B7280;
+            --gradient-primary: linear-gradient(135deg, #8B5FBF 0%, #6D3FA3 100%);
+            --gradient-secondary: linear-gradient(135deg, #C4B5FD 0%, #8B5FBF 100%);
+            --gradient-accent: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+            --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.1);
+            --shadow: 0 8px 25px rgba(139, 95, 191, 0.15);
+            --shadow-lg: 0 15px 35px rgba(139, 95, 191, 0.2);
+            --radius: 12px;
+            --radius-lg: 16px;
+            
+            /* إضافة متغيرات للوضع الداكن */
+            --bg-color: #FAF5FF;
+            --text-color: #1F1F23;
+            --card-bg: white;
+            --border-color: rgba(139, 95, 191, 0.1);
+            --footer-bg: #1F1F23;
+            --footer-text: white;
+            --header-bg: white;
+            --section-header-bg: #FAF5FF;
+        }
+
+        /* متغيرات الوضع الداكن - ألوان بنفسجية */
+        [data-theme="dark"] {
+            --bg-color: #0F0F1A;
+            --text-color: #E2E8F0;
+            --card-bg: #1A1A2E;
+            --border-color: rgba(167, 139, 250, 0.15);
+            --footer-bg: #0F0F1A;
+            --footer-text: #E2E8F0;
+            --header-bg: #1A1A2E;
+            --section-header-bg: #2D2B42;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.5);
+            --gray: #94A3B8;
+            --light: #2D2B42;
+            
+            /* تحسين التدرجات للوضع الداكن */
+            --gradient-primary: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%);
+            --gradient-secondary: linear-gradient(135deg, #C4B5FD 0%, #8B5FBF 100%);
+            --gradient-accent: linear-gradient(135deg, #F472B6 0%, #DB2777 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--header-bg);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-left: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        /* زر تبديل الوضع الداكن */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: rotate(15deg);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .page-description {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Settings Container */
+        .settings-container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .settings-section {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            background: var(--section-header-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .setting-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background-color: var(--gray);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            right: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(-30px);
+        }
+
+        /* Select Dropdown */
+        .select-wrapper {
+            position: relative;
+            width: 200px;
+        }
+
+        .select-wrapper select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .select-wrapper::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--gray);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            gap: 0.7rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: var(--accent);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-danger:hover {
+            background: #DB2777;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 95, 191, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--footer-text);
+            opacity: 0.8;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-light);
+            opacity: 1;
+            padding-right: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--footer-text);
+            opacity: 0.7;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 2rem 0;
+            }
+            
+            .settings-container {
+                margin: 2rem auto;
+            }
+            
+            .section-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-stethoscope logo-icon"></i>
+                <span class="logo-text">IDOS</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="diagnosis.html" class="nav-link"><i class="fas fa-diagnoses"></i> التشخيص</a></li>
+                <li><a href="chat.html" class="nav-link"><i class="fas fa-comments"></i> محادثة</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-hospital"></i> المستشفيات</a></li>
+                <li><a href="#" class="nav-link active"><i class="fas fa-cog"></i> الإعدادات</a></li>
+            </ul>
+            
+            <div class="user-actions">
+                <!-- زر تبديل الوضع الداكن -->
+                <button class="theme-toggle" id="themeToggle" title="تبديل الوضع الداكن">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">م</div>
+                    <span>محمد أحمد</span>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">إعدادات الحساب</h1>
+            <p class="page-description">إدارة تفضيلات حسابك وإعدادات الخصوصية والنظام</p>
+        </div>
+    </section>
+
+    <!-- Settings Container -->
+    <div class="settings-container">
+        <!-- إعدادات الحساب -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-user-cog"></i> إعدادات الحساب</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">اللغة</div>
+                        <div class="setting-description">اختر اللغة المفضلة للواجهة</div>
+                    </div>
+                    <div class="select-wrapper">
+                        <select id="languageSelect">
+                            <option value="ar">العربية</option>
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">الإشعارات عبر البريد</div>
+                        <div class="setting-description">تلقي إشعارات عبر البريد الإلكتروني</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">الإشعارات</div>
+                        <div class="setting-description">تلقي إشعارات حول الأنشطة المهمة</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخصوصية والأمان -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-shield-alt"></i> الخصوصية والأمان</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">جمع البيانات</div>
+                        <div class="setting-description">السماح بجمع البيانات لتحسين التجربة</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">نشاط المستخدم</div>
+                        <div class="setting-description">مشاركة نشاطك الدراسي مع الآخرين</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">الملف الشخصي العام</div>
+                        <div class="setting-description">السماح للآخرين بمشاهدة ملفك الشخصي</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- إعدادات النظام -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-cogs"></i> إعدادات النظام</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">وضع الأداء</div>
+                        <div class="setting-description">تحسين الأداء على حساب بعض الميزات</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">النسخ الاحتياطي</div>
+                        <div class="setting-description">إنشاء نسخة احتياطية تلقائية للبيانات</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">التحديث التلقائي</div>
+                        <div class="setting-description">تثبيت التحديثات تلقائيًا عند توفرها</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- إجراءات الحساب -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> إجراءات الحساب</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">حذف الحساب</div>
+                        <div class="setting-description">حذف حسابك وجميع البيانات المرتبطة به</div>
+                    </div>
+                    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i> حذف الحساب</button>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">تصدير البيانات</div>
+                        <div class="setting-description">تحميل نسخة من بياناتك الشخصية</div>
+                    </div>
+                    <button class="btn btn-outline"><i class="fas fa-download"></i> تصدير البيانات</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- أزرار الحفظ والإلغاء -->
+        <div class="action-buttons">
+            <button class="btn btn-primary"><i class="fas fa-save"></i> حفظ التغييرات</button>
+            <button class="btn btn-outline"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>IDOS</h3>
+                <ul class="footer-links">
+                    <li><a href="#">عن المنصة</a></li>
+                    <li><a href="#">كيفية الاستخدام</a></li>
+                    <li><a href="#">الأسئلة الشائعة</a></li>
+                    <li><a href="#">اتصل بنا</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>الخدمات</h3>
+                <ul class="footer-links">
+                    <li><a href="diagnosis.html">التشخيص الذكي</a></li>
+                    <li><a href="chat.html">المساعد الذكي</a></li>
+                    <li><a href="#">المستشفيات</a></li>
+                    <li><a href="#">المختبرات</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>الدعم</h3>
+                <ul class="footer-links">
+                    <li><a href="#">مركز المساعدة</a></li>
+                    <li><a href="#">الشروط والأحكام</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                    <li><a href="#">الإبلاغ عن مشكلة</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة &copy; 2023 IDOS</p>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript للتعامل مع تفاعلات الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // حفظ الإعدادات
+            const saveButton = document.querySelector('.btn-primary');
+            saveButton.addEventListener('click', function() {
+                alert('تم حفظ الإعدادات بنجاح!');
+            });
+            
+            // حذف الحساب
+            const deleteButton = document.querySelector('.btn-danger');
+            deleteButton.addEventListener('click', function() {
+                if(confirm('هل أنت متأكد من رغبتك في حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+                    alert('تم حذف الحساب بنجاح!');
+                }
+            });
+            
+            // تصدير البيانات
+            const exportButton = document.querySelectorAll('.btn-outline')[1];
+            exportButton.addEventListener('click', function() {
+                alert('سيتم تحميل بياناتك خلال لحظات...');
+            });
+            
+            // تبديل الوضع الداكن
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // التحقق من الوضع الحالي من localStorage
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.className = 'fas fa-sun';
+                    themeToggle.setAttribute('title', 'التبديل إلى الوضع الفاتح');
+                } else {
+                    themeIcon.className = 'fas fa-moon';
+                    themeToggle.setAttribute('title', 'التبديل إلى الوضع الداكن');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
